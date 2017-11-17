@@ -349,6 +349,7 @@ public class PlayerView extends RelativeLayout implements View.OnTouchListener, 
     public void onStartTrackingTouch(SeekBar seekBar) {
         handler.removeMessages(VIDEO_PROCESS_SYNC_MSG);
         this.stopSendVideoProcessSyncMsg();
+        this.cancelDelayHideControllerMsg();
     }
 
     @Override
@@ -358,6 +359,7 @@ public class PlayerView extends RelativeLayout implements View.OnTouchListener, 
         playerManager.seekTo(percent);
         handler.removeMessages(VIDEO_PROCESS_SYNC_MSG);
         this.startSendVideoProcessSyncMsg();
+        this.delayHideControllerMsg();
     }
 
     public PlayerManager getManager() {

@@ -103,6 +103,7 @@ public class PlayerManager implements IMediaPlayer.OnCompletionListener, IMediaP
     public void play() {
         if (playerSupport) {
             this.videoView.setVideoPath(url);
+            this.videoView.setRender(IjkVideoView.RENDER_TEXTURE_VIEW);
             this.resume();
         }
         playerView.syncBuffingStatus(true);
@@ -373,13 +374,8 @@ public class PlayerManager implements IMediaPlayer.OnCompletionListener, IMediaP
             frameLayout.setLayoutParams(params);
 
             // resize the texture render view to full screen
-            WindowManager wm = (WindowManager) activity.getSystemService(Context.WINDOW_SERVICE);
-            final int w = wm.getDefaultDisplay().getWidth();
-            final int h = wm.getDefaultDisplay().getHeight();
-
             TextureRenderView renderView = new TextureRenderView(activity);
             renderView.setLayoutParams(params);
-            renderView.setVideoSize(w, h);
             player.videoView.setRenderView(renderView);
 
             // save params for back to normal mode
@@ -413,12 +409,8 @@ public class PlayerManager implements IMediaPlayer.OnCompletionListener, IMediaP
             FrameLayout.LayoutParams params = new FrameLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT);
 
             // resize render view
-            WindowManager wm = (WindowManager) activity.getSystemService(Context.WINDOW_SERVICE);
-            final int w = wm.getDefaultDisplay().getWidth();
-            final int h = wm.getDefaultDisplay().getHeight();
             TextureRenderView renderView = new TextureRenderView(activity);
             renderView.setLayoutParams(params);
-            renderView.setVideoSize(w, h);
 
             // remove player view from parent
             ((ViewGroup) player.getParent()).removeView(player);
