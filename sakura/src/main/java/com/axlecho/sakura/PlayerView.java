@@ -188,7 +188,7 @@ public class PlayerView extends RelativeLayout implements View.OnTouchListener, 
         long position = playerManager.getCurrentPosition();
         long duration = playerManager.getDuration();
 
-        Log.d(TAG, "[syncProgress] current " + position + " duration " + duration);
+        // Log.d(TAG, "[syncProgress] current " + position + " duration " + duration);
         if (duration <= 0) {
             controllerSeekBar.setProgress(0);
             controllerSeekBar.setSecondaryProgress(0);

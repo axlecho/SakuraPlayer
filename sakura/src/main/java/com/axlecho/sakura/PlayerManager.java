@@ -150,7 +150,7 @@ public class PlayerManager implements IMediaPlayer.OnCompletionListener, IMediaP
         long duration = videoView.getDuration();
         int pos = (int) (duration * percent);
         videoView.seekTo(pos);
-        Log.d(TAG, "[seekTo] percent " + percent + " duration " + duration + " seek to " + pos);
+        // Log.d(TAG, "[seekTo] percent " + percent + " duration " + duration + " seek to " + pos);
     }
 
     public PlayerManager toggleAspectRatio() {
