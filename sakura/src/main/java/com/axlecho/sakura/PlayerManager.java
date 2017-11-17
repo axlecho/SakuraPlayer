@@ -22,7 +22,7 @@ import static com.axlecho.sakura.IjkVideoView.RENDER_NONE;
  * Created by tcking on 15/10/27.
  */
 public class PlayerManager implements IMediaPlayer.OnCompletionListener, IMediaPlayer.OnErrorListener, IMediaPlayer.OnInfoListener, IMediaPlayer.OnPreparedListener {
-    public static final String TAG = "player";
+    public static final String TAG = "sakura_player";
 
     public static final String SCALETYPE_FITPARENT = "fitParent";
     public static final String SCALETYPE_FILLPARENT = "fillParent";
@@ -92,7 +92,7 @@ public class PlayerManager implements IMediaPlayer.OnCompletionListener, IMediaP
 
 
         if (!playerSupport) {
-            DebugLog.e("播放器不支持此设备");
+            Log.e(TAG, "播放器不支持此设备");
         }
     }
 
@@ -214,7 +214,7 @@ public class PlayerManager implements IMediaPlayer.OnCompletionListener, IMediaP
             s = "off";
         }
 
-        DebugLog.d("onVolumeSlide:" + s);
+        Log.d(TAG, "onVolumeSlide:" + s);
     }
 
     private void onProgressSlide(float percent) {
@@ -234,7 +234,7 @@ public class PlayerManager implements IMediaPlayer.OnCompletionListener, IMediaP
         int showDelta = (int) delta / 1000;
         if (showDelta != 0) {
             String text = showDelta > 0 ? ("+" + showDelta) : "" + showDelta;
-            DebugLog.d("onProgressSlide:" + text);
+            Log.d(TAG, "onProgressSlide:" + text);
         }
     }
 
@@ -315,7 +315,7 @@ public class PlayerManager implements IMediaPlayer.OnCompletionListener, IMediaP
 
         @Override
         protected void excute() {
-            DebugLog.d("[StartPlayAction]");
+            Log.d(TAG, "[StartPlayAction]");
             manager.play();
         }
     }
@@ -331,7 +331,7 @@ public class PlayerManager implements IMediaPlayer.OnCompletionListener, IMediaP
 
         @Override
         protected void excute() {
-            DebugLog.d("[ResumeAction]");
+            Log.d(TAG, "[ResumeAction]");
             manager.resume();
 
             // ijkPlayer没有提供播放事件的回调
@@ -352,7 +352,7 @@ public class PlayerManager implements IMediaPlayer.OnCompletionListener, IMediaP
 
         @Override
         protected void excute() {
-            DebugLog.d("[PauseAction]");
+            Log.d(TAG, "[PauseAction]");
             manager.pause();
             view.syncPauseStatus();
         }
@@ -396,7 +396,7 @@ public class PlayerManager implements IMediaPlayer.OnCompletionListener, IMediaP
                 renderView.setVideoSize(w, h);
                 player.videoView.setRenderView(renderView);
 
-                player.parent = (ViewGroup)player.getParent();
+                player.parent = (ViewGroup) player.getParent();
                 player.params = player.getLayoutParams();
 
                 ((ViewGroup) player.getParent()).removeView(player);
