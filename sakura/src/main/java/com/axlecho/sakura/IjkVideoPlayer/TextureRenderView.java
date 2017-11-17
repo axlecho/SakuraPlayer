@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package com.axlecho.sakura;
+package com.axlecho.sakura.IjkVideoPlayer;
 
 import android.annotation.TargetApi;
 import android.content.Context;

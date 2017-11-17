@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package com.axlecho.sakura;
+package com.axlecho.sakura.IjkVideoPlayer;
 
 import android.graphics.SurfaceTexture;
 import android.support.annotation.NonNull;

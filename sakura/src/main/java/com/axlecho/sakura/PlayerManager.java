@@ -1,10 +1,12 @@
 package com.axlecho.sakura;
 
+import android.app.ActionBar;
 import android.app.Activity;
 import android.content.Context;
 import android.content.pm.ActivityInfo;
 import android.graphics.Color;
 import android.media.AudioManager;
+import android.os.Build;
 import android.util.Log;
 import android.view.OrientationEventListener;
 import android.view.View;
@@ -12,10 +14,12 @@ import android.view.ViewGroup;
 import android.view.WindowManager;
 import android.widget.FrameLayout;
 
+import com.axlecho.sakura.IjkVideoPlayer.IRenderView;
+import com.axlecho.sakura.IjkVideoPlayer.IjkVideoView;
+import com.axlecho.sakura.IjkVideoPlayer.TextureRenderView;
+
 import tv.danmaku.ijk.media.player.IMediaPlayer;
 import tv.danmaku.ijk.media.player.IjkMediaPlayer;
-
-import static com.axlecho.sakura.IjkVideoView.RENDER_NONE;
 
 
 /**
@@ -143,8 +147,9 @@ public class PlayerManager implements IMediaPlayer.OnCompletionListener, IMediaP
 
     public void seekTo(float percent) {
         long duration = videoView.getDuration();
-        videoView.seekTo((int) (duration * percent));
-        Log.d(TAG, "[seekTo] percent " + percent + " duration " + duration);
+        int pos = (int) (duration * percent);
+        videoView.seekTo(pos);
+        Log.d(TAG, "[seekTo] percent " + percent + " duration " + duration + " seek to " + pos);
     }
 
     public PlayerManager toggleAspectRatio() {
@@ -157,36 +162,6 @@ public class PlayerManager implements IMediaPlayer.OnCompletionListener, IMediaP
     public void setDefaultRetryTime(long defaultRetryTime) {
         this.defaultRetryTime = defaultRetryTime;
     }
-
-    public void onPause() {
-        pauseTime = System.currentTimeMillis();
-        if (status == STATUS_PLAYING) {
-            videoView.pause();
-            if (!isLive) {
-                currentPosition = videoView.getCurrentPosition();
-            }
-        }
-    }
-
-    public void onResume() {
-        pauseTime = 0;
-        if (status == STATUS_PLAYING) {
-            if (isLive) {
-                videoView.seekTo(0);
-            } else {
-                if (currentPosition > 0) {
-                    videoView.seekTo(currentPosition);
-                }
-            }
-            videoView.start();
-        }
-    }
-
-    public void onDestroy() {
-        // orientationEventListener.disable();
-        videoView.stopPlayback();
-    }
-
 
     public int getCurrentState() {
         return videoView.getCurrentState();
@@ -360,82 +335,113 @@ public class PlayerManager implements IMediaPlayer.OnCompletionListener, IMediaP
 
     public static class ToggleFullScreenAction extends BaseAction {
         private static final int FULL_SCREEN_LAYOUT_ID = 5201314;
-
         private Activity activity;
-        private PlayerManager manager;
         private PlayerView player;
 
-        public ToggleFullScreenAction(Activity activity, PlayerManager manager, PlayerView player) {
+        public ToggleFullScreenAction(Activity activity, PlayerView player) {
             this.activity = activity;
-            this.manager = manager;
             this.player = player;
+        }
+
+        private void processToggleToFullScreenMode() {
+            // change activity to landscape orientation and set activity to full screen
+            activity.setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE);
+            activity.getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN, WindowManager.LayoutParams.FLAG_FULLSCREEN);
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
+                View decorView = activity.getWindow().getDecorView();
+                decorView.setSystemUiVisibility(
+                        View.SYSTEM_UI_FLAG_LAYOUT_STABLE
+                                | View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION
+                                | View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN
+                                | View.SYSTEM_UI_FLAG_HIDE_NAVIGATION // hide nav bar
+                                | View.SYSTEM_UI_FLAG_FULLSCREEN // hide status bar
+                                | View.SYSTEM_UI_FLAG_IMMERSIVE);
+            }
+
+            ActionBar actionBar = activity.getActionBar();
+            if (actionBar != null) {
+                actionBar.hide();
+            }
+
+            // prepare a framelayout as fullscreen mode container
+            FrameLayout.LayoutParams params = new FrameLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT);
+            ViewGroup root = (ViewGroup) activity.findViewById(android.R.id.content);
+            FrameLayout frameLayout = new FrameLayout(activity);
+            frameLayout.setId(FULL_SCREEN_LAYOUT_ID);
+            frameLayout.setBackgroundColor(Color.BLACK);
+            root.addView(frameLayout);
+            frameLayout.setLayoutParams(params);
+
+            // resize the texture render view to full screen
+            WindowManager wm = (WindowManager) activity.getSystemService(Context.WINDOW_SERVICE);
+            final int w = wm.getDefaultDisplay().getWidth();
+            final int h = wm.getDefaultDisplay().getHeight();
+
+            TextureRenderView renderView = new TextureRenderView(activity);
+            renderView.setLayoutParams(params);
+            renderView.setVideoSize(w, h);
+            player.videoView.setRenderView(renderView);
+
+            // save params for back to normal mode
+            player.parent = (ViewGroup) player.getParent();
+            player.params = player.getLayoutParams();
+
+            // remove player view from parent and add it to full screen container
+            ((ViewGroup) player.getParent()).removeView(player);
+            frameLayout.addView(player);
+            player.setLayoutParams(params);
+
+            player.isFullScreen = true;
+        }
+
+        private void processToggleToNormalMode() {
+            // change activity to portrait orientation and add the decorview
+            activity.setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
+            activity.getWindow().clearFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN);
+            ActionBar actionBar = activity.getActionBar();
+            if (actionBar != null) {
+                actionBar.show();
+            }
+            View decorView = activity.getWindow().getDecorView();
+            decorView.setSystemUiVisibility(
+                    View.SYSTEM_UI_FLAG_LAYOUT_STABLE
+                            | View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION
+                            | View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN);
+
+
+            ViewGroup root = (ViewGroup) activity.findViewById(android.R.id.content);
+            FrameLayout.LayoutParams params = new FrameLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT);
+
+            // resize render view
+            WindowManager wm = (WindowManager) activity.getSystemService(Context.WINDOW_SERVICE);
+            final int w = wm.getDefaultDisplay().getWidth();
+            final int h = wm.getDefaultDisplay().getHeight();
+            TextureRenderView renderView = new TextureRenderView(activity);
+            renderView.setLayoutParams(params);
+            renderView.setVideoSize(w, h);
+
+            // remove player view from parent
+            ((ViewGroup) player.getParent()).removeView(player);
+
+            // set to preview params
+            player.parent.addView(player);
+            player.setLayoutParams(player.params);
+
+            // remove full screen container from root
+            FrameLayout frameLayout = (FrameLayout) root.findViewById(FULL_SCREEN_LAYOUT_ID);
+            root.removeView(frameLayout);
+
+            player.isFullScreen = false;
         }
 
         @Override
         public void excute() {
             Log.d(TAG, "[ToggleFullScreenAction] ");
             if (!player.isFullScreen) {
-                activity.setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE);
-                activity.getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN,
-                        WindowManager.LayoutParams.FLAG_FULLSCREEN);
-                this.manager.videoView.setRender(RENDER_NONE);
-
-                ViewGroup group = (ViewGroup) activity.findViewById(android.R.id.content);
-                WindowManager wm = (WindowManager) activity.getSystemService(Context.WINDOW_SERVICE);
-                final int w = wm.getDefaultDisplay().getWidth();
-                final int h = wm.getDefaultDisplay().getHeight();
-                FrameLayout.LayoutParams lpParent = new FrameLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT);
-                FrameLayout frameLayout = new FrameLayout(activity);
-                frameLayout.setId(FULL_SCREEN_LAYOUT_ID);
-                frameLayout.setBackgroundColor(Color.BLACK);
-                group.addView(frameLayout);
-                frameLayout.setLayoutParams(lpParent);
-
-                TextureRenderView renderView = new TextureRenderView(activity);
-                renderView.setLayoutParams(lpParent);
-                renderView.setVideoSize(w, h);
-                player.videoView.setRenderView(renderView);
-
-                player.parent = (ViewGroup) player.getParent();
-                player.params = player.getLayoutParams();
-
-                ((ViewGroup) player.getParent()).removeView(player);
-                frameLayout.addView(player);
-                player.setLayoutParams(lpParent);
-                player.isFullScreen = true;
+                processToggleToFullScreenMode();
             } else {
-                activity.setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
-
-                ViewGroup group = (ViewGroup) activity.findViewById(android.R.id.content);
-
-                WindowManager wm = (WindowManager) activity.getSystemService(Context.WINDOW_SERVICE);
-                final int w = wm.getDefaultDisplay().getWidth();
-                final int h = wm.getDefaultDisplay().getHeight();
-                FrameLayout.LayoutParams lpParent = new FrameLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT);
-                TextureRenderView renderView = new TextureRenderView(activity);
-                renderView.setLayoutParams(lpParent);
-                renderView.setVideoSize(w, h);
-
-                ((ViewGroup) player.getParent()).removeView(player);
-                player.parent.addView(player);
-                player.setLayoutParams(player.params);
-                player.isFullScreen = false;
-
-                FrameLayout frameLayout = (FrameLayout) group.findViewById(FULL_SCREEN_LAYOUT_ID);
-                group.removeView(frameLayout);
-
-
+                processToggleToNormalMode();
             }
         }
-    }
-
-    public interface PlayerStateListener {
-        void onComplete();
-
-        void onError();
-
-        void onLoading();
-
-        void onPlay();
     }
 }

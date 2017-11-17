@@ -17,6 +17,7 @@ import android.widget.RelativeLayout;
 import android.widget.SeekBar;
 import android.widget.TextView;
 
+import com.axlecho.sakura.IjkVideoPlayer.IjkVideoView;
 import com.squareup.picasso.Picasso;
 
 import java.util.Timer;
@@ -27,7 +28,7 @@ import java.util.TimerTask;
  */
 
 public class PlayerView extends RelativeLayout implements View.OnTouchListener, SeekBar.OnSeekBarChangeListener {
-    private static final String TAG = "player";
+    private static final String TAG = "sakura_player";
     private static final int VIDEO_PROCESS_SYNC_MSG = 1;
     private static final int HIDE_CONTROLLER_MSG = 2;
 
@@ -123,7 +124,7 @@ public class PlayerView extends RelativeLayout implements View.OnTouchListener, 
         this.playerBtn.setOnClickListener(new PlayerManager.StartPlayAction(playerManager, this));
         this.controllerPlayerBtn.setOnClickListener(new PlayerManager.StartPlayAction(playerManager, this));
         this.controllerSeekBar.setOnSeekBarChangeListener(this);
-        this.controllerFullScreenBtn.setOnClickListener(new PlayerManager.ToggleFullScreenAction(activity, playerManager, this));
+        this.controllerFullScreenBtn.setOnClickListener(new PlayerManager.ToggleFullScreenAction(activity, this));
     }
 
     public void stop() {
@@ -187,6 +188,7 @@ public class PlayerView extends RelativeLayout implements View.OnTouchListener, 
         long position = playerManager.getCurrentPosition();
         long duration = playerManager.getDuration();
 
+        Log.d(TAG, "[syncProgress] current " + position + " duration " + duration);
         if (duration <= 0) {
             controllerSeekBar.setProgress(0);
             controllerSeekBar.setSecondaryProgress(0);
@@ -195,8 +197,8 @@ public class PlayerView extends RelativeLayout implements View.OnTouchListener, 
             return;
         }
 
-        long pos = 1000L * position / duration;
-        controllerSeekBar.setProgress((int) pos);
+        int pos = (int) (1000 * position / duration);
+        controllerSeekBar.setProgress(pos);
         int percent = videoView.getBufferPercentage();
         controllerSeekBar.setSecondaryProgress(percent * 10);
         controllerCurrentTimeTextView.setText(generateTime(position));
@@ -224,7 +226,7 @@ public class PlayerView extends RelativeLayout implements View.OnTouchListener, 
     }
 
     public void toggleFullScreen() {
-        PlayerManager.ToggleFullScreenAction action = new PlayerManager.ToggleFullScreenAction(activity, playerManager, this);
+        PlayerManager.ToggleFullScreenAction action = new PlayerManager.ToggleFullScreenAction(activity, this);
         action.excute();
     }
 
@@ -238,7 +240,7 @@ public class PlayerView extends RelativeLayout implements View.OnTouchListener, 
 
     private void startSendVideoProcessSyncMsg() {
         syncVideoProcessTimer = new Timer();
-        syncVideoProcessTimer.schedule(new VideoProcessSyncTimeTask(), 200, 1000);
+        syncVideoProcessTimer.schedule(new VideoProcessSyncTimeTask(), 200, 500);
     }
 
     private void stopSendVideoProcessSyncMsg() {
