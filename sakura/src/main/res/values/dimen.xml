@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <dimen name="second_navigation_bar_height">40dp</dimen>
+
+    <dimen name="common_margin_parent_horizontal">16dp</dimen>
+    <dimen name="common_margin_top">8dp</dimen>
+    <dimen name="common_margin_space_horizontal">4dp</dimen>
+    <dimen name="common_margin_space_vertical">4dp</dimen>
+    <dimen name="common_icon_size">24dp</dimen>
+    <dimen name="common_icon_size_small">12dp</dimen>
+    <dimen name="common_icon_size_big">32dp</dimen>
+    <dimen name="common_icon_size_huge">48dp</dimen>
+    <dimen name="common_icon_size_max">96dp</dimen>
+    <dimen name="common_icon_padding">4dp</dimen>
+
+    <dimen name="toolbar_height">56dp</dimen>
+    <dimen name="list_item_height">72dp</dimen>
+</resources>
