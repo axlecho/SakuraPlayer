@@ -34,8 +34,11 @@ dependencies {
     compile 'com.android.support.constraint:constraint-layout:1.0.2'
 
     compile 'tv.danmaku.ijk.media:ijkplayer-java:0.8.4'
+    compile 'com.squareup.okhttp3:okhttp:3.9.0'
+    compile 'com.squareup.okhttp3:logging-interceptor:3.9.0'
+    compile 'com.squareup.picasso:picasso:2.5.2'
 
     testCompile 'junit:junit:4.12'
-    compile 'com.squareup.picasso:picasso:2.5.2'
+
 
 }
