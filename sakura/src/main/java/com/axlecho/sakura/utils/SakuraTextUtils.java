@@ -14,7 +14,7 @@ public class SakuraTextUtils {
         Pattern pattern = Pattern.compile(patternStr);
         Matcher matcher = pattern.matcher(data);
         if (matcher.find()) {
-            String found = matcher.group(0);
+            String found = matcher.group(1);
             SakuraLogUtils.d(TAG, found);
             return found;
         }
