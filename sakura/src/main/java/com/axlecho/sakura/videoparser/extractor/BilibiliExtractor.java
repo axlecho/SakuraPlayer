@@ -5,9 +5,19 @@ import com.axlecho.sakura.utils.SakuraLogUtils;
 import com.axlecho.sakura.utils.SakuraNetworkUtils;
 import com.axlecho.sakura.utils.SakuraTextUtils;
 
+import org.w3c.dom.Document;
+import org.w3c.dom.Element;
+import org.w3c.dom.Node;
+import org.w3c.dom.NodeList;
+import org.xml.sax.SAXException;
+
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+
+import javax.xml.parsers.DocumentBuilder;
+import javax.xml.parsers.DocumentBuilderFactory;
+import javax.xml.parsers.ParserConfigurationException;
 
 /**
  * Created by axlecho on 2017/11/18 0018.
@@ -55,7 +65,7 @@ public class BilibiliExtractor extends Extractor {
     public String apiReq(String cid, String quality, boolean bangumi, boolean bangumiMovie) throws IOException {
         String ts = String.valueOf(System.currentTimeMillis());
         String paramsStr = String.format("cid=%s&player=1&quality=%s&ts=%s", cid, quality, ts);
-        String chkSum = SakuraEncryptUtils.md5sum(paramsStr);
+        String chkSum = SakuraEncryptUtils.md5sum(paramsStr + SEC1);
         String apiUrl = API_URL + paramsStr + "&sign=" + chkSum;
         String xmlStr = SakuraNetworkUtils.getInstance().get(apiUrl);
         return xmlStr;
@@ -68,7 +78,6 @@ public class BilibiliExtractor extends Extractor {
         }
 
         page = SakuraNetworkUtils.getInstance().get(url);
-        SakuraLogUtils.d(TAG, page);
 
         title = SakuraTextUtils.search(page, "<h1\\s*title=\"([^\"]+)\"");
         if (title == null) {
@@ -134,7 +143,21 @@ public class BilibiliExtractor extends Extractor {
         String apiXml = apiReq(cid, quality, bangumi, false);
     }
 
-    private void parseBiliXml(String apiXml) {
+    private void parseBiliXml(String apiXml) throws ParserConfigurationException, IOException, SAXException {
         SakuraLogUtils.d(TAG, apiXml);
+
+        DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
+        DocumentBuilder builder = factory.newDocumentBuilder();
+        Document document = builder.parse(apiXml);
+        NodeList durls = document.getElementsByTagName("durl");
+
+
+        for (int i = 0; i < durls.getLength(); ++i) {
+            Element durl = (Element) durls.item(i);
+            String size = durl.getElementsByTagName("size").item(0).getNodeValue();
+            String url = durl.getElementsByTagName("url").item(0).getNodeName();
+
+            SakuraLogUtils.d(TAG, "size " + size + " url " + url);
+        }
     }
 }

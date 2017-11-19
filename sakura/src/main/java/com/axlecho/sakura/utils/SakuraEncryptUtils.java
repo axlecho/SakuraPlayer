@@ -10,7 +10,7 @@ public class SakuraEncryptUtils {
     public static String md5sum(String plaintext) {
         char hexDigits[] = {'0', '1', '2', '3', '4', '5', '6', '7', '8', '9', 'a', 'b', 'c', 'd', 'e', 'f'};
         try {
-            byte[] btInput = plaintext.getBytes();
+            byte[] btInput = plaintext.getBytes("utf-8");
             MessageDigest mdInst = MessageDigest.getInstance("MD5");
             mdInst.update(btInput);
             byte[] md = mdInst.digest();
