@@ -9,9 +9,11 @@ import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
+import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
 
 import java.io.IOException;
+import java.io.StringReader;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -49,7 +51,7 @@ public class BilibiliExtractor extends Extractor {
     private String url;
     private String page;
     private String title;
-
+    private String realUrl;
 
     @Override
     public String get(String pageUrl) {
@@ -59,7 +61,7 @@ public class BilibiliExtractor extends Extractor {
         } catch (IOException e) {
             e.printStackTrace();
         }
-        return null;
+        return realUrl;
     }
 
     public String apiReq(String cid, String quality, boolean bangumi, boolean bangumiMovie) throws IOException {
@@ -141,6 +143,12 @@ public class BilibiliExtractor extends Extractor {
     private void downloadByVid(String cid, boolean bangumi) throws IOException {
         String quality = bangumi ? STREAM_TYPES.get(0) : STREAM_TYPES.get(1);
         String apiXml = apiReq(cid, quality, bangumi, false);
+        try {
+            this.parseBiliXml(apiXml);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
     }
 
     private void parseBiliXml(String apiXml) throws ParserConfigurationException, IOException, SAXException {
@@ -148,16 +156,17 @@ public class BilibiliExtractor extends Extractor {
 
         DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
         DocumentBuilder builder = factory.newDocumentBuilder();
-        Document document = builder.parse(apiXml);
+        Document document = builder.parse(new InputSource(new StringReader(apiXml)));
         NodeList durls = document.getElementsByTagName("durl");
 
 
         for (int i = 0; i < durls.getLength(); ++i) {
             Element durl = (Element) durls.item(i);
-            String size = durl.getElementsByTagName("size").item(0).getNodeValue();
-            String url = durl.getElementsByTagName("url").item(0).getNodeName();
+            String size = durl.getElementsByTagName("size").item(0).getTextContent();
+            String url = durl.getElementsByTagName("url").item(0).getTextContent();
 
             SakuraLogUtils.d(TAG, "size " + size + " url " + url);
+            this.realUrl = url;
         }
     }
 }

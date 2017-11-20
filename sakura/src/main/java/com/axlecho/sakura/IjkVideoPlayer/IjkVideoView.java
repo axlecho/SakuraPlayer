@@ -290,7 +290,7 @@ public class IjkVideoView extends FrameLayout implements MediaController.MediaPl
                 IjkMediaPlayer ijkMediaPlayer = null;
                 if (mUri != null) {
                     ijkMediaPlayer = new IjkMediaPlayer();
-                    IjkMediaPlayer.native_setLogLevel(IjkMediaPlayer.IJK_LOG_INFO);
+                    IjkMediaPlayer.native_setLogLevel(IjkMediaPlayer.IJK_LOG_VERBOSE);
 
                     if (usingMediaCodec) {
                         ijkMediaPlayer.setOption(IjkMediaPlayer.OPT_CATEGORY_PLAYER, "mediacodec", 1);
@@ -933,6 +933,12 @@ public class IjkVideoView extends FrameLayout implements MediaController.MediaPl
                 }
                 break;
             }
+        }
+    }
+
+    public void setOption(int category, String name, long value) {
+        if (mMediaPlayer instanceof IjkMediaPlayer) {
+            ((IjkMediaPlayer) mMediaPlayer).setOption(category, name, value);
         }
     }
 }
