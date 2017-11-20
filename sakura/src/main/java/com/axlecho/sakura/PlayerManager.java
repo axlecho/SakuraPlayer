@@ -20,6 +20,7 @@ import com.axlecho.sakura.IjkVideoPlayer.TextureRenderView;
 import com.axlecho.sakura.units.HttpProxyCacheServerManager;
 import com.danikula.videocache.HttpProxyCacheServer;
 
+import okhttp3.Headers;
 import tv.danmaku.ijk.media.player.IMediaPlayer;
 import tv.danmaku.ijk.media.player.IjkMediaPlayer;
 
@@ -120,7 +121,7 @@ public class PlayerManager implements IMediaPlayer.OnCompletionListener, IMediaP
     }
 
     public void setVideoUrl(String videoUrl) {
-        this.url = this.getCacheVideoPath(videoUrl);
+        this.url = videoUrl;
     }
 
     public void stop() {
@@ -439,8 +440,13 @@ public class PlayerManager implements IMediaPlayer.OnCompletionListener, IMediaP
         }
     }
 
+
     private String getCacheVideoPath(String url) {
         HttpProxyCacheServer proxy = HttpProxyCacheServerManager.getInstance(context).getProxy();
         return proxy.getProxyUrl(url);
+    }
+
+    public void addHttpHeaders(String name,String value) {
+        videoView.setOption(IjkMediaPlayer.OPT_CATEGORY_FORMAT,name,value);
     }
 }

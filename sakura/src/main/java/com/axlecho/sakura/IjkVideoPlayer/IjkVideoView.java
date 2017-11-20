@@ -37,6 +37,7 @@ import android.widget.MediaController;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
@@ -114,6 +115,8 @@ public class IjkVideoView extends FrameLayout implements MediaController.MediaPl
     private boolean enableSurfaceView = false;
     private boolean enableTextureView = true;
     private boolean enableNoView = false;
+
+    private String headers;
 
     public IjkVideoView(Context context) {
         super(context);
@@ -317,11 +320,14 @@ public class IjkVideoView extends FrameLayout implements MediaController.MediaPl
                     ijkMediaPlayer.setOption(IjkMediaPlayer.OPT_CATEGORY_PLAYER, "framedrop", 1);
                     ijkMediaPlayer.setOption(IjkMediaPlayer.OPT_CATEGORY_PLAYER, "start-on-prepared", 0);
 
-                    ijkMediaPlayer.setOption(IjkMediaPlayer.OPT_CATEGORY_FORMAT, "http-detect-range-support", 0);
+                    ijkMediaPlayer.setOption(IjkMediaPlayer.OPT_CATEGORY_FORMAT, "http-detect-range-support", 1);
                     ijkMediaPlayer.setOption(IjkMediaPlayer.OPT_CATEGORY_FORMAT, "timeout", 10000000);
                     ijkMediaPlayer.setOption(IjkMediaPlayer.OPT_CATEGORY_FORMAT, "reconnect", 1);
 
                     ijkMediaPlayer.setOption(IjkMediaPlayer.OPT_CATEGORY_CODEC, "skip_loop_filter", 48);
+                    if (headers != null) {
+                        ijkMediaPlayer.setOption(IjkMediaPlayer.OPT_CATEGORY_FORMAT, "headers", headers);
+                    }
                 }
                 mMediaPlayer = ijkMediaPlayer;
             }
@@ -936,10 +942,9 @@ public class IjkVideoView extends FrameLayout implements MediaController.MediaPl
         }
     }
 
-    public void setOption(int category, String name, long value) {
-        if (mMediaPlayer instanceof IjkMediaPlayer) {
-            ((IjkMediaPlayer) mMediaPlayer).setOption(category, name, value);
-        }
+    public void setOption(int category, String name, String value) {
+        Log.d(TAG, "[setOption] " + value);
+        this.headers = value;
     }
 }
 
