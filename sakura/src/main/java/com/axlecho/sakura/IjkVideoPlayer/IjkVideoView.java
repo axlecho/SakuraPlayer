@@ -942,8 +942,8 @@ public class IjkVideoView extends FrameLayout implements MediaController.MediaPl
         }
     }
 
-    public void setOption(int category, String name, String value) {
-        Log.d(TAG, "[setOption] " + value);
+    public void setHeader(String value) {
+        Log.d(TAG, "[setHeader] " + value);
         this.headers = value;
     }
 }
