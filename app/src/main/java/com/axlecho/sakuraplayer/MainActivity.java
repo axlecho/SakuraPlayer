@@ -9,6 +9,8 @@ import com.axlecho.sakura.PlayerView;
 import com.axlecho.sakura.utils.SakuraLogUtils;
 import com.axlecho.sakura.videoparser.SakuraParser;
 
+import okhttp3.Headers;
+
 public class MainActivity extends AppCompatActivity {
     private static final String TAG = "demo";
     private PlayerView player;
@@ -42,6 +44,12 @@ public class MainActivity extends AppCompatActivity {
 
             String url = (String) msg.obj;
             SakuraLogUtils.d(TAG, url);
+
+            Headers headers = new Headers.Builder()
+                    .add("User-Agent", "Mozilla/5.0 (Windows NT 10.0; WOW64; rv:51.0) Gecko/20100101 Firefox/51.0")
+                    .add("Referer", "https://www.bilibili.com/video/av16336903/")
+                    .build();
+            player.addHeaders(null, headers.toString());
             player.setVideoUrl(url);
         }
     };

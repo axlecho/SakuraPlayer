@@ -7,7 +7,6 @@ import com.axlecho.sakura.utils.SakuraTextUtils;
 
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
-import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
@@ -168,5 +167,16 @@ public class BilibiliExtractor extends Extractor {
             SakuraLogUtils.d(TAG, "size " + size + " url " + url);
             this.realUrl = url;
         }
+
+        // this.testDownload();
+    }
+
+    private void testDownload() {
+        try {
+            SakuraNetworkUtils.getInstance().get(realUrl,url);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
     }
 }

@@ -365,4 +365,8 @@ public class PlayerView extends RelativeLayout implements View.OnTouchListener, 
     public PlayerManager getManager() {
         return playerManager;
     }
+
+    public void addHeaders(String name, String value) {
+        this.playerManager.addHttpHeaders(name, value);
+    }
 }

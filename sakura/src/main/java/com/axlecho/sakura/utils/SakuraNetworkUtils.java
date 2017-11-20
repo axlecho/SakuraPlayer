@@ -59,5 +59,18 @@ public class SakuraNetworkUtils {
         return response.body().string();
     }
 
+    public String get(String url, String referer) throws IOException {
+        Headers headers = new Headers.Builder()
+                .add("User-Agent", "Mozilla/5.0 (Windows NT 10.0; WOW64; rv:51.0) Gecko/20100101 Firefox/51.0")
+                .add("Referer", referer)
+                .build();
+        Request request = new Request.Builder()
+                .url(url)
+                .headers(headers)
+                .build();
+
+        Response response = client.newCall(request).execute();
+        return response.body().string();
+    }
 
 }

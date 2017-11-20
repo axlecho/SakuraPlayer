@@ -18,6 +18,7 @@ import com.axlecho.sakura.IjkVideoPlayer.IRenderView;
 import com.axlecho.sakura.IjkVideoPlayer.IjkVideoView;
 import com.axlecho.sakura.IjkVideoPlayer.TextureRenderView;
 
+import okhttp3.Headers;
 import tv.danmaku.ijk.media.player.IMediaPlayer;
 import tv.danmaku.ijk.media.player.IjkMediaPlayer;
 
@@ -435,5 +436,9 @@ public class PlayerManager implements IMediaPlayer.OnCompletionListener, IMediaP
                 processToggleToNormalMode();
             }
         }
+    }
+
+    public void addHttpHeaders(String name,String value) {
+        videoView.setOption(IjkMediaPlayer.OPT_CATEGORY_FORMAT,name,value);
     }
 }
