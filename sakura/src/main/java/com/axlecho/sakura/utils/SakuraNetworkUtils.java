@@ -48,7 +48,6 @@ public class SakuraNetworkUtils {
 
     }
 
-
     public String get(String url) throws IOException {
         Request request = new Request.Builder()
                 .url(url)

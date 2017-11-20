@@ -7,6 +7,8 @@ import android.content.pm.ActivityInfo;
 import android.graphics.Color;
 import android.media.AudioManager;
 import android.os.Build;
+import android.os.Handler;
+import android.os.Message;
 import android.util.Log;
 import android.view.OrientationEventListener;
 import android.view.View;
@@ -17,6 +19,8 @@ import android.widget.FrameLayout;
 import com.axlecho.sakura.IjkVideoPlayer.IRenderView;
 import com.axlecho.sakura.IjkVideoPlayer.IjkVideoView;
 import com.axlecho.sakura.IjkVideoPlayer.TextureRenderView;
+import com.axlecho.sakura.utils.SakuraLogUtils;
+import com.axlecho.sakura.videoparser.SakuraParser;
 
 import okhttp3.Headers;
 import tv.danmaku.ijk.media.player.IMediaPlayer;
@@ -120,6 +124,7 @@ public class PlayerManager implements IMediaPlayer.OnCompletionListener, IMediaP
 
     public void setVideoUrl(String videoUrl) {
         this.url = videoUrl;
+        this.parserUrl();
     }
 
     public void stop() {
@@ -438,7 +443,37 @@ public class PlayerManager implements IMediaPlayer.OnCompletionListener, IMediaP
         }
     }
 
-    public void addHttpHeaders(String name,String value) {
-        videoView.setOption(IjkMediaPlayer.OPT_CATEGORY_FORMAT,name,value);
+    public void addHeaders(String headers) {
+        videoView.setHeader(headers);
     }
+
+    private void parserUrl() {
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                String realUrl = SakuraParser.getInstance().getStreamUrl(url);
+                Message msg = Message.obtain();
+                msg.obj = realUrl;
+                handler.sendMessage(msg);
+            }
+        }).start();
+    }
+
+
+    Handler handler = new Handler() {
+        @Override
+        public void handleMessage(Message msg) {
+            super.handleMessage(msg);
+
+            String realUrl = (String) msg.obj;
+            SakuraLogUtils.d(TAG, realUrl);
+
+            Headers headers = new Headers.Builder()
+                    .add("User-Agent", "Mozilla/5.0 (Windows NT 10.0; WOW64; rv:51.0) Gecko/20100101 Firefox/51.0")
+                    .add("Referer", url)
+                    .build();
+            addHeaders(headers.toString());
+            url = realUrl;
+        }
+    };
 }
