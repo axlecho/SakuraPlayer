@@ -17,6 +17,8 @@ import android.widget.FrameLayout;
 import com.axlecho.sakura.IjkVideoPlayer.IRenderView;
 import com.axlecho.sakura.IjkVideoPlayer.IjkVideoView;
 import com.axlecho.sakura.IjkVideoPlayer.TextureRenderView;
+import com.axlecho.sakura.units.HttpProxyCacheServerManager;
+import com.danikula.videocache.HttpProxyCacheServer;
 
 import tv.danmaku.ijk.media.player.IMediaPlayer;
 import tv.danmaku.ijk.media.player.IjkMediaPlayer;
@@ -118,7 +120,7 @@ public class PlayerManager implements IMediaPlayer.OnCompletionListener, IMediaP
     }
 
     public void setVideoUrl(String videoUrl) {
-        this.url = videoUrl;
+        this.url = this.getCacheVideoPath(videoUrl);
     }
 
     public void stop() {
@@ -435,5 +437,10 @@ public class PlayerManager implements IMediaPlayer.OnCompletionListener, IMediaP
                 processToggleToNormalMode();
             }
         }
+    }
+
+    private String getCacheVideoPath(String url) {
+        HttpProxyCacheServer proxy = HttpProxyCacheServerManager.getInstance(context).getProxy();
+        return proxy.getProxyUrl(url);
     }
 }
