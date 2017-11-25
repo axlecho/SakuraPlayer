@@ -67,9 +67,26 @@ public class SakuraNetworkUtils {
                 .url(url)
                 .headers(headers)
                 .build();
+        Response response = client.newCall(request).execute();
+        return response.body().string();
+    }
+
+    public String get(String url, Headers headers) throws IOException {
+        Request request = new Request.Builder()
+                .url(url)
+                .headers(headers)
+                .build();
 
         Response response = client.newCall(request).execute();
         return response.body().string();
     }
 
+    public Headers getForHeaders(String url) throws IOException {
+        Request request = new Request.Builder()
+                .url(url)
+                .build();
+
+        Response response = client.newCall(request).execute();
+        return response.headers();
+    }
 }

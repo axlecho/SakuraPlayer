@@ -1,5 +1,7 @@
 package com.axlecho.sakura.utils;
 
+import java.io.UnsupportedEncodingException;
+import java.net.URLDecoder;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -17,6 +19,15 @@ public class SakuraTextUtils {
             String found = matcher.group(1);
             SakuraLogUtils.d(TAG, found);
             return found;
+        }
+        return null;
+    }
+
+    public static String urlDecode(String url) {
+        try {
+            return URLDecoder.decode(url, "utf-8");
+        } catch (UnsupportedEncodingException e) {
+            SakuraLogUtils.w(TAG, "decode failed " + url);
         }
         return null;
     }

@@ -1,7 +1,7 @@
 package com.axlecho.sakura.videoparser;
 
-import com.axlecho.sakura.videoparser.extractor.BilibiliExtractor;
 import com.axlecho.sakura.videoparser.extractor.Extractor;
+import com.axlecho.sakura.videoparser.extractor.YoukuExtractor;
 
 /**
  * Created by axlecho on 2017/11/18 0018.
@@ -13,7 +13,7 @@ public class SakuraParser {
     private Extractor extractor;
 
     private SakuraParser() {
-        this.extractor = new BilibiliExtractor();
+        this.extractor = new YoukuExtractor();
     }
 
     public static SakuraParser getInstance() {
