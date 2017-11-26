@@ -300,10 +300,6 @@ public class PlayerView extends RelativeLayout implements View.OnTouchListener, 
 
         @Override
         public boolean onDoubleTap(MotionEvent e) {
-            if (!playerManager.isPlaying()) {
-                return true;
-            }
-
             toggleFullScreen();
             Log.d(TAG, "[onDoubleTap]");
             return false;
