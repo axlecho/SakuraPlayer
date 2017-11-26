@@ -3,6 +3,7 @@ package com.axlecho.sakura.videoparser.extractor;
 import com.axlecho.sakura.utils.SakuraLogUtils;
 import com.axlecho.sakura.utils.SakuraNetworkUtils;
 import com.axlecho.sakura.utils.SakuraTextUtils;
+import com.google.gson.Gson;
 
 import java.io.IOException;
 
@@ -21,7 +22,9 @@ public class YoukuExtractor extends Extractor {
     private String url;
     private String vid;
     private String utid;
-    private String ccode = "0502";
+    private String ccode = "0406";
+    private String realUrl;
+    private YoukuModule data;
 
     @Override
     public String get(String pageUrl) {
@@ -31,7 +34,7 @@ public class YoukuExtractor extends Extractor {
         } catch (IOException e) {
             e.printStackTrace();
         }
-        return null;
+        return realUrl;
     }
 
     private String fetch_cna() throws IOException {
@@ -58,6 +61,10 @@ public class YoukuExtractor extends Extractor {
         headersBuilder.add("User-Agent", mobile_ua);
 
         String json = SakuraNetworkUtils.getInstance().get(url, headersBuilder.build());
+
+        Gson gson = new Gson();
+        this.data = gson.fromJson(json, YoukuModule.class);
+        SakuraLogUtils.d(TAG, gson.toJson(data));
     }
 
     private String getVidFromUrl(String url) {
@@ -80,5 +87,44 @@ public class YoukuExtractor extends Extractor {
         this.vid = this.getVidFromUrl(url);
         this.utid = fetch_cna();
         this.youku_ups();
+
+        if (data.data.video == null) {
+            SakuraLogUtils.e(TAG, new Gson().toJson(data.data.error));
+            return;
+        }
+
+        for (YoukuSeg segs : data.data.stream[0].segs) {
+            this.realUrl = segs.cdn_url;
+        }
+    }
+
+    class YoukuModule {
+        public YoukuDataModule data;
+    }
+
+    class YoukuDataModule {
+        public YoukuErrorModule error;
+        public YoukuVideoInfo video;
+        public YoukuStream[] stream;
+    }
+
+    class YoukuErrorModule {
+        public String note;
+        public int code;
+    }
+
+    class YoukuStream {
+        public String stream_type;
+        public YoukuSeg[] segs;
+
+    }
+
+    class YoukuVideoInfo {
+        public String title;
+    }
+
+    class YoukuSeg {
+        public int size;
+        public String cdn_url;
     }
 }

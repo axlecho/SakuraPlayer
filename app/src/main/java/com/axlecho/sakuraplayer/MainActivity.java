@@ -21,13 +21,6 @@ public class MainActivity extends AppCompatActivity {
         // player.setVideoUrl("https://www.bilibili.com/video/av14661594/");
         // player.setVideoUrl("https://www.bilibili.com/video/av15560010/");
 
-        // player.setVideoUrl("http://v.youku.com/v_show/id_XMzE2NDE3ODU0NA==.html");
-
-        new Thread(new Runnable() {
-            @Override
-            public void run() {
-                SakuraParser.getInstance().getStreamUrl("http://v.youku.com/v_show/id_XMzE2NDE3ODU0NA==.html");
-            }
-        }).start();
+        player.setVideoUrl("http://v.youku.com/v_show/id_XMzE4MzY3NjM0OA==.html");
     }
 }
