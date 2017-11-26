@@ -4,7 +4,7 @@ IjkPlayer简单封装
 Usage
 ---
 
-##With Gradle:
+With Gradle:
 
 *   Step 1. Add the JitPack repository to your build file
 Add it in your root build.gradle at the end of repositories:
@@ -21,6 +21,27 @@ allprojects {
 ```
 compile 'com.github.axlecho:SakuraPlayer:0.4'
 compile 'tv.danmaku.ijk.media:ijkplayer-armv7a:0.8.4'
+```
+
+*	Step 3. Setup the playview
+
+add PlayerView to layout
+```xml
+<com.axlecho.sakura.PlayerView
+	android:id="@+id/player"
+	android:layout_width="wrap_content"
+	android:layout_height="wrap_content"
+	android:text="Hello World!"
+	app:layout_constraintBottom_toBottomOf="parent"
+	app:layout_constraintLeft_toLeftOf="parent"
+	app:layout_constraintRight_toRightOf="parent"
+	app:layout_constraintTop_toTopOf="parent" />
+```
+
+setup at code
+```java	
+player = (PlayerView) findViewById(R.id.player);
+player.setVideoUrl("https://www.bilibili.com/video/av15560010/");
 ```
 
 License
