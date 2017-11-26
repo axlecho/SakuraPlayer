@@ -24,7 +24,7 @@ import javax.xml.parsers.ParserConfigurationException;
  * Created by axlecho on 2017/11/18 0018.
  */
 
-public class BilibiliExtractor extends Extractor {
+public class BilibiliExecutor extends BaseExtractors {
     public static final String NAME = "Bilibili";
 
     private static final String TAG = NAME.toLowerCase();
