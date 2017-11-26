@@ -13,7 +13,7 @@ import okhttp3.Headers;
  * Created by axlecho on 2017/11/25 0025.
  */
 
-public class YoukuExtractor extends Extractor {
+public class YoukuExtractor extends BaseExtractors {
     public static final String NAME = "Youku";
     private static final String TAG = NAME.toLowerCase();
     private static final String mobile_ua = "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_12_6) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/60.0.3112.101 Safari/537.36";

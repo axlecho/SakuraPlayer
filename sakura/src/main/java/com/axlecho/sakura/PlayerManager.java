@@ -28,10 +28,6 @@ import okhttp3.Headers;
 import tv.danmaku.ijk.media.player.IMediaPlayer;
 import tv.danmaku.ijk.media.player.IjkMediaPlayer;
 
-<<<<<<<HEAD
-        =======
-        >>>>>>>code refacting,move parser code to player manager
-
 
 /**
  * Created by tcking on 15/10/27.
