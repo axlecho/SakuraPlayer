@@ -1,7 +1,9 @@
 package com.axlecho.sakura.videoparser;
 
+import com.axlecho.sakura.utils.SakuraLogUtils;
 import com.axlecho.sakura.videoparser.extractor.BaseExtractors;
 import com.axlecho.sakura.videoparser.extractor.BilibiliExecutor;
+import com.axlecho.sakura.videoparser.extractor.XiamiExecutor;
 import com.axlecho.sakura.videoparser.extractor.YoukuExtractor;
 
 import java.net.MalformedURLException;
@@ -12,7 +14,7 @@ import java.net.URL;
  */
 
 public class SakuraParser {
-
+    private static final String TAG = "sakura-parser";
     private static SakuraParser instance;
     private BaseExtractors extractor;
 
@@ -34,6 +36,7 @@ public class SakuraParser {
         this.extractor = resolveExecutor(pageUrl);
         if (extractor == null) {
             // not surpport ye
+            SakuraLogUtils.w(TAG,"cound not find a extractor for target url");
             return pageUrl;
         }
         return extractor.get(pageUrl);
@@ -46,6 +49,8 @@ public class SakuraParser {
                 return new BilibiliExecutor();
             } else if (url.getHost().contains(YoukuExtractor.NAME.toLowerCase())) {
                 return new YoukuExtractor();
+            } else if (url.getHost().contains(XiamiExecutor.NAME.toLowerCase())) {
+                return new XiamiExecutor();
             }
         } catch (MalformedURLException e) {
 

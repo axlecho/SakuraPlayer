@@ -34,6 +34,6 @@ dependencies {
     compile 'tv.danmaku.ijk.media:ijkplayer-x86_64:0.8.4'
 
     testCompile 'junit:junit:4.12'
-    compile 'com.github.axlecho:SakuraPlayer:0.9.2'
-    // compile project(':sakura')
+    // compile 'com.github.axlecho:SakuraPlayer:0.9.2'
+    compile project(':sakura')
 }
