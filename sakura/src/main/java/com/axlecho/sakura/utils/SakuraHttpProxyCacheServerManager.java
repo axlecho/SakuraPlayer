@@ -1,4 +1,4 @@
-package com.axlecho.sakura.units;
+package com.axlecho.sakura.utils;
 
 import android.content.Context;
 
@@ -8,22 +8,22 @@ import com.danikula.videocache.HttpProxyCacheServer;
  * Created by axlecho on 2017/11/21 0021.
  */
 
-public class HttpProxyCacheServerManager {
-    private static HttpProxyCacheServerManager instance;
+public class SakuraHttpProxyCacheServerManager {
+    private static SakuraHttpProxyCacheServerManager instance;
     private HttpProxyCacheServer proxy;
 
-    public static HttpProxyCacheServerManager getInstance(Context context) {
+    public static SakuraHttpProxyCacheServerManager getInstance(Context context) {
         if (instance == null) {
-            synchronized (HttpProxyCacheServerManager.class) {
+            synchronized (SakuraHttpProxyCacheServerManager.class) {
                 if (instance == null) {
-                    instance = new HttpProxyCacheServerManager(context);
+                    instance = new SakuraHttpProxyCacheServerManager(context);
                 }
             }
         }
         return instance;
     }
 
-    private HttpProxyCacheServerManager(Context context) {
+    private SakuraHttpProxyCacheServerManager(Context context) {
         proxy = new HttpProxyCacheServer(context);
     }
 

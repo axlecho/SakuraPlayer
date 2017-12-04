@@ -19,7 +19,7 @@ import android.widget.FrameLayout;
 import com.axlecho.sakura.IjkVideoPlayer.IRenderView;
 import com.axlecho.sakura.IjkVideoPlayer.IjkVideoView;
 import com.axlecho.sakura.IjkVideoPlayer.TextureRenderView;
-import com.axlecho.sakura.units.HttpProxyCacheServerManager;
+import com.axlecho.sakura.utils.SakuraHttpProxyCacheServerManager;
 import com.axlecho.sakura.utils.SakuraLogUtils;
 import com.axlecho.sakura.videoparser.SakuraParser;
 import com.danikula.videocache.HttpProxyCacheServer;
@@ -447,7 +447,7 @@ public class PlayerManager implements IMediaPlayer.OnCompletionListener, IMediaP
 
 
     private String getCacheVideoPath(String url) {
-        HttpProxyCacheServer proxy = HttpProxyCacheServerManager.getInstance(context).getProxy();
+        HttpProxyCacheServer proxy = SakuraHttpProxyCacheServerManager.getInstance(context).getProxy();
         return proxy.getProxyUrl(url);
     }
 
