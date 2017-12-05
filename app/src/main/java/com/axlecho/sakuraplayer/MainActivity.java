@@ -23,7 +23,7 @@ public class MainActivity extends AppCompatActivity {
         // player.setVideoUrl("https://www.bilibili.com/video/av15560010/");
         // player.setVideoUrl("http://v.youku.com/v_show/id_XMzE4MzY3NjM0OA==.html");
 
-        player.setVideoUrl("http://www.xiami.com/song/1796759297");
+        // player.setVideoUrl("http://www.xiami.com/song/1796759297");
 
         //        new Thread(new Runnable() {
         //            @Override
@@ -33,5 +33,6 @@ public class MainActivity extends AppCompatActivity {
         //            }
         //        }).start();
 
+        player.setVideoUrl("http://v.youku.com/v_show/id_XMzE4MzY3NjM0OA==.html");
     }
 }
