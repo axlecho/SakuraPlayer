@@ -1,5 +1,6 @@
 IjkPlayer简单封装
 ===
+[![](https://jitpack.io/v/axlecho/SakuraPlayer.svg)](https://jitpack.io/#axlecho/SakuraPlayer)
 
 Usage
 ---
