@@ -22,7 +22,7 @@ public class YoukuExtractor extends BaseExtractors {
     private String url;
     private String vid;
     private String utid;
-    private String ccode = "0406";
+    private String ccode = "0507";
     private String realUrl;
     private YoukuModule data;
 

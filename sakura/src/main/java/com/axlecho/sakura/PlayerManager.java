@@ -9,6 +9,7 @@ import android.media.AudioManager;
 import android.os.Build;
 import android.os.Handler;
 import android.os.Message;
+import android.text.TextUtils;
 import android.util.Log;
 import android.view.OrientationEventListener;
 import android.view.View;
@@ -472,10 +473,14 @@ public class PlayerManager implements IMediaPlayer.OnCompletionListener, IMediaP
         @Override
         public void handleMessage(Message msg) {
             super.handleMessage(msg);
-
             String realUrl = (String) msg.obj;
-            SakuraLogUtils.d(TAG, realUrl);
 
+            if(TextUtils.isEmpty(realUrl)) {
+                SakuraLogUtils.e(TAG,"prase failed");
+                return;
+            }
+
+            SakuraLogUtils.d(TAG, "the real url :" + realUrl);
             Headers headers = new Headers.Builder()
                     .add("User-Agent", "Mozilla/5.0 (Windows NT 10.0; WOW64; rv:51.0) Gecko/20100101 Firefox/51.0")
                     .add("Referer", url)
