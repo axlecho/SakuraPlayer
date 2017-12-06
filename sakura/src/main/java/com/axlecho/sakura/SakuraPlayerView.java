@@ -2,8 +2,6 @@ package com.axlecho.sakura;
 
 import android.app.Activity;
 import android.content.Context;
-import android.os.Handler;
-import android.os.Message;
 import android.support.annotation.Nullable;
 import android.util.AttributeSet;
 import android.util.Log;
@@ -18,19 +16,21 @@ import android.widget.SeekBar;
 import android.widget.TextView;
 
 import com.axlecho.sakura.IjkVideoPlayer.IjkVideoView;
+import com.axlecho.sakura.utils.SakuraLogUtils;
 import com.squareup.picasso.Picasso;
 
 import java.util.Timer;
 import java.util.TimerTask;
 
+import static com.axlecho.sakura.SakuraPlayerHandler.HIDE_CONTROLLER_MSG;
+import static com.axlecho.sakura.SakuraPlayerHandler.VIDEO_PROCESS_SYNC_MSG;
+
 /**
  * Created by axlecho on 2017/10/19 0019.
  */
 
-public class PlayerView extends RelativeLayout implements View.OnTouchListener, SeekBar.OnSeekBarChangeListener {
+public class SakuraPlayerView extends RelativeLayout implements View.OnTouchListener, SeekBar.OnSeekBarChangeListener {
     private static final String TAG = "sakura_player";
-    private static final int VIDEO_PROCESS_SYNC_MSG = 1;
-    private static final int HIDE_CONTROLLER_MSG = 2;
 
     // videoView
     public IjkVideoView videoView;
@@ -51,27 +51,30 @@ public class PlayerView extends RelativeLayout implements View.OnTouchListener, 
     private View statusLoadingView;
     private ImageView statusTrumbImageView;
 
-    private PlayerManager playerManager;
+    private SakuraPlayerManager playerManager;
     private Timer syncVideoProcessTimer;
     private Timer hideControllerTimer;
+    private TimerTask hideControllerTimerTask;
+    private TimerTask syncVideoProcessTimerTask;
+
+
     private GestureDetector gestureDetector;
-
-
     public ViewGroup parent;
     public ViewGroup.LayoutParams params;
     public boolean isFullScreen = false;
+    private SakuraPlayerHandler handler;
 
-    public PlayerView(Context context) {
+    public SakuraPlayerView(Context context) {
         super(context);
         this.init(context);
     }
 
-    public PlayerView(Context context, @Nullable AttributeSet attrs) {
+    public SakuraPlayerView(Context context, @Nullable AttributeSet attrs) {
         super(context, attrs);
         this.init(context);
     }
 
-    public PlayerView(Context context, @Nullable AttributeSet attrs, int defStyleAttr) {
+    public SakuraPlayerView(Context context, @Nullable AttributeSet attrs, int defStyleAttr) {
         super(context, attrs, defStyleAttr);
         this.init(context);
     }
@@ -84,8 +87,9 @@ public class PlayerView extends RelativeLayout implements View.OnTouchListener, 
 
         this.gestureDetector = new GestureDetector(context, new PlayerGestureListener());
         this.setOnTouchListener(this);
+        this.handler = new SakuraPlayerHandler(this);
 
-        this.playerManager = new PlayerManager(context, this);
+        this.playerManager = new SakuraPlayerManager(context, this);
         this.syncStopStatus();
 
         if (context instanceof Activity) {
@@ -114,17 +118,30 @@ public class PlayerView extends RelativeLayout implements View.OnTouchListener, 
     @Override
     protected void onFinishInflate() {
         super.onFinishInflate();
-
         // save params for toggle full screen mode
         parent = (ViewGroup) getParent();
         params = this.getLayoutParams();
     }
 
     public void initAction() {
-        this.playerBtn.setOnClickListener(new PlayerManager.StartPlayAction(playerManager, this));
-        this.controllerPlayerBtn.setOnClickListener(new PlayerManager.StartPlayAction(playerManager, this));
+        this.playerBtn.setOnClickListener(new SakuraPlayerManager.StartPlayAction(playerManager, this));
+        this.controllerPlayerBtn.setOnClickListener(new SakuraPlayerManager.StartPlayAction(playerManager, this));
         this.controllerSeekBar.setOnSeekBarChangeListener(this);
-        this.controllerFullScreenBtn.setOnClickListener(new PlayerManager.ToggleFullScreenAction(activity, this));
+        this.controllerFullScreenBtn.setOnClickListener(new SakuraPlayerManager.ToggleFullScreenAction(activity, this));
+    }
+
+    public void clear() {
+        if (playerManager.isPlaying()) {
+            playerManager.stop();
+            playerManager = null;
+        }
+
+        this.stopSendVideoProcessSyncMsg();
+        this.cancelDelayHideControllerMsg();
+
+        if (handler != null) {
+            handler = null;
+        }
     }
 
     public void stop() {
@@ -154,8 +171,8 @@ public class PlayerView extends RelativeLayout implements View.OnTouchListener, 
         this.statusTrumbImageView.setVisibility(GONE);
         this.playerBtn.setImageResource(R.mipmap.ic_player_center_pause);
         this.controllerPlayerBtn.setImageResource(R.mipmap.ic_player_pause_white_24dp);
-        this.playerBtn.setOnClickListener(new PlayerManager.PauseAction(playerManager, this));
-        this.controllerPlayerBtn.setOnClickListener(new PlayerManager.PauseAction(playerManager, this));
+        this.playerBtn.setOnClickListener(new SakuraPlayerManager.PauseAction(playerManager, this));
+        this.controllerPlayerBtn.setOnClickListener(new SakuraPlayerManager.PauseAction(playerManager, this));
         this.startSendVideoProcessSyncMsg();
     }
 
@@ -177,14 +194,14 @@ public class PlayerView extends RelativeLayout implements View.OnTouchListener, 
     public void syncPauseStatus() {
         this.playerBtn.setImageResource(R.mipmap.ic_player_center_play);
         this.controllerPlayerBtn.setImageResource(R.mipmap.ic_player_play_white_24dp);
-        this.playerBtn.setOnClickListener(new PlayerManager.ResumeAction(playerManager, this));
-        this.controllerPlayerBtn.setOnClickListener(new PlayerManager.ResumeAction(playerManager, this));
+        this.playerBtn.setOnClickListener(new SakuraPlayerManager.ResumeAction(playerManager, this));
+        this.controllerPlayerBtn.setOnClickListener(new SakuraPlayerManager.ResumeAction(playerManager, this));
     }
 
     public void syncErrorStatus() {
     }
 
-    private void syncProgress() {
+    public void syncProgress() {
         long position = playerManager.getCurrentPosition();
         long duration = playerManager.getDuration();
 
@@ -226,7 +243,7 @@ public class PlayerView extends RelativeLayout implements View.OnTouchListener, 
     }
 
     public void toggleFullScreen() {
-        PlayerManager.ToggleFullScreenAction action = new PlayerManager.ToggleFullScreenAction(activity, this);
+        SakuraPlayerManager.ToggleFullScreenAction action = new SakuraPlayerManager.ToggleFullScreenAction(activity, this);
         action.excute();
     }
 
@@ -239,8 +256,10 @@ public class PlayerView extends RelativeLayout implements View.OnTouchListener, 
     }
 
     private void startSendVideoProcessSyncMsg() {
+        this.stopSendVideoProcessSyncMsg();
         syncVideoProcessTimer = new Timer();
-        syncVideoProcessTimer.schedule(new VideoProcessSyncTimeTask(), 200, 500);
+        syncVideoProcessTimerTask = new VideoProcessSyncTimeTask();
+        syncVideoProcessTimer.schedule(syncVideoProcessTimerTask, 200, 500);
     }
 
     private void stopSendVideoProcessSyncMsg() {
@@ -248,17 +267,29 @@ public class PlayerView extends RelativeLayout implements View.OnTouchListener, 
             syncVideoProcessTimer.cancel();
             syncVideoProcessTimer = null;
         }
+
+        if (syncVideoProcessTimerTask != null) {
+            syncVideoProcessTimerTask.cancel();
+            syncVideoProcessTimerTask = null;
+        }
     }
 
     private void delayHideControllerMsg() {
+        this.cancelDelayHideControllerMsg();
         hideControllerTimer = new Timer();
-        hideControllerTimer.schedule(new HideControllerTimeTask(), 4000);
+        hideControllerTimerTask = new HideControllerTimeTask();
+        hideControllerTimer.schedule(hideControllerTimerTask, 4000);
     }
 
     private void cancelDelayHideControllerMsg() {
         if (hideControllerTimer != null) {
             hideControllerTimer.cancel();
             hideControllerTimer = null;
+        }
+
+        if (hideControllerTimerTask != null) {
+            hideControllerTimerTask.cancel();
+            hideControllerTimerTask = null;
         }
     }
 
@@ -277,24 +308,6 @@ public class PlayerView extends RelativeLayout implements View.OnTouchListener, 
             handler.sendEmptyMessage(HIDE_CONTROLLER_MSG);
         }
     }
-
-    private Handler handler = new Handler() {
-
-        @Override
-        public void handleMessage(Message msg) {
-            switch (msg.what) {
-                case VIDEO_PROCESS_SYNC_MSG:
-                    syncProgress();
-                    break;
-                case HIDE_CONTROLLER_MSG:
-                    if (playerManager.isPlaying()) {
-                        syncControllerStatus(false);
-                    }
-                    break;
-            }
-            super.handleMessage(msg);
-        }
-    };
 
     private class PlayerGestureListener extends GestureDetector.SimpleOnGestureListener {
 
@@ -358,7 +371,7 @@ public class PlayerView extends RelativeLayout implements View.OnTouchListener, 
         this.delayHideControllerMsg();
     }
 
-    public PlayerManager getManager() {
+    public SakuraPlayerManager getManager() {
         return playerManager;
     }
 

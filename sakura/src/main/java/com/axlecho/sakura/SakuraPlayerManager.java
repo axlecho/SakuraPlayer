@@ -33,7 +33,7 @@ import tv.danmaku.ijk.media.player.IjkMediaPlayer;
 /**
  * Created by tcking on 15/10/27.
  */
-public class PlayerManager implements IMediaPlayer.OnCompletionListener, IMediaPlayer.OnErrorListener, IMediaPlayer.OnInfoListener, IMediaPlayer.OnPreparedListener {
+public class SakuraPlayerManager implements IMediaPlayer.OnCompletionListener, IMediaPlayer.OnErrorListener, IMediaPlayer.OnInfoListener, IMediaPlayer.OnPreparedListener {
     public static final String TAG = "sakura_player";
 
     public static final String SCALETYPE_FITPARENT = "fitParent";
@@ -45,7 +45,7 @@ public class PlayerManager implements IMediaPlayer.OnCompletionListener, IMediaP
 
     private final Context context;
     private final IjkVideoView videoView;
-    private final PlayerView playerView;
+    private final SakuraPlayerView sakuraPlayerView;
     private final AudioManager audioManager;
 
     private final int mMaxVolume;
@@ -80,7 +80,7 @@ public class PlayerManager implements IMediaPlayer.OnCompletionListener, IMediaP
 
     private String url;
 
-    public PlayerManager(Context context, PlayerView playerView) {
+    public SakuraPlayerManager(Context context, SakuraPlayerView sakuraPlayerView) {
         try {
             IjkMediaPlayer.loadLibrariesOnce(null);
             IjkMediaPlayer.native_profileBegin("libijkplayer.so");
@@ -91,8 +91,8 @@ public class PlayerManager implements IMediaPlayer.OnCompletionListener, IMediaP
 
         this.context = context;
         this.screenWidthPixels = this.context.getResources().getDisplayMetrics().widthPixels;
-        this.playerView = playerView;
-        this.videoView = playerView.videoView;
+        this.sakuraPlayerView = sakuraPlayerView;
+        this.videoView = sakuraPlayerView.videoView;
 
         this.videoView.setOnCompletionListener(this);
         this.videoView.setOnErrorListener(this);
@@ -114,7 +114,7 @@ public class PlayerManager implements IMediaPlayer.OnCompletionListener, IMediaP
             this.videoView.setRender(IjkVideoView.RENDER_TEXTURE_VIEW);
             this.resume();
         }
-        playerView.syncBuffingStatus(true);
+        sakuraPlayerView.syncBuffingStatus(true);
     }
 
     public void resume() {
@@ -135,7 +135,7 @@ public class PlayerManager implements IMediaPlayer.OnCompletionListener, IMediaP
         if (videoView.getCurrentState() != IjkVideoView.STATE_IDLE) {
             videoView.release(true);
             videoView.setVideoURI(null);
-            playerView.syncStopStatus();
+            sakuraPlayerView.syncStopStatus();
         }
     }
 
@@ -162,7 +162,7 @@ public class PlayerManager implements IMediaPlayer.OnCompletionListener, IMediaP
         // Log.d(TAG, "[seekTo] percent " + percent + " duration " + duration + " seek to " + pos);
     }
 
-    public PlayerManager toggleAspectRatio() {
+    public SakuraPlayerManager toggleAspectRatio() {
         if (videoView != null) {
             videoView.toggleAspectRatio();
         }
@@ -257,18 +257,18 @@ public class PlayerManager implements IMediaPlayer.OnCompletionListener, IMediaP
         switch (what) {
             case IMediaPlayer.MEDIA_INFO_BUFFERING_START:
                 if (videoView.getCurrentState() == IjkVideoView.STATE_PLAYING) {
-                    playerView.syncBuffingStatus(true);
+                    sakuraPlayerView.syncBuffingStatus(true);
                 }
                 break;
             case IMediaPlayer.MEDIA_INFO_BUFFERING_END:
-                playerView.syncBuffingStatus(false);
+                sakuraPlayerView.syncBuffingStatus(false);
                 break;
             case IMediaPlayer.MEDIA_INFO_NETWORK_BANDWIDTH:
                 // TODO 显示下载速度
                 // Toaster.show("download rate:" + extra);
                 break;
             case IMediaPlayer.MEDIA_INFO_VIDEO_RENDERING_START:
-                playerView.syncPlayingStatus();
+                sakuraPlayerView.syncPlayingStatus();
                 break;
         }
         return false;
@@ -277,7 +277,7 @@ public class PlayerManager implements IMediaPlayer.OnCompletionListener, IMediaP
     @Override
     public void onPrepared(IMediaPlayer iMediaPlayer) {
         Log.d(TAG, "[onPrepared] state " + videoView.getCurrentState());
-        playerView.syncBuffingStatus(false);
+        sakuraPlayerView.syncBuffingStatus(false);
     }
 
     public static abstract class BaseAction implements View.OnClickListener {
@@ -290,10 +290,10 @@ public class PlayerManager implements IMediaPlayer.OnCompletionListener, IMediaP
     }
 
     public static class StartPlayAction extends BaseAction {
-        private PlayerManager manager;
-        private PlayerView view;
+        private SakuraPlayerManager manager;
+        private SakuraPlayerView view;
 
-        public StartPlayAction(PlayerManager manager, PlayerView view) {
+        public StartPlayAction(SakuraPlayerManager manager, SakuraPlayerView view) {
             this.manager = manager;
             this.view = view;
         }
@@ -306,10 +306,10 @@ public class PlayerManager implements IMediaPlayer.OnCompletionListener, IMediaP
     }
 
     public static class ResumeAction extends BaseAction {
-        private PlayerManager manager;
-        private PlayerView view;
+        private SakuraPlayerManager manager;
+        private SakuraPlayerView view;
 
-        public ResumeAction(PlayerManager manager, PlayerView view) {
+        public ResumeAction(SakuraPlayerManager manager, SakuraPlayerView view) {
             this.manager = manager;
             this.view = view;
         }
@@ -327,10 +327,10 @@ public class PlayerManager implements IMediaPlayer.OnCompletionListener, IMediaP
     }
 
     public static class PauseAction extends BaseAction {
-        private PlayerManager manager;
-        private PlayerView view;
+        private SakuraPlayerManager manager;
+        private SakuraPlayerView view;
 
-        public PauseAction(PlayerManager manager, PlayerView view) {
+        public PauseAction(SakuraPlayerManager manager, SakuraPlayerView view) {
             this.manager = manager;
             this.view = view;
         }
@@ -346,9 +346,9 @@ public class PlayerManager implements IMediaPlayer.OnCompletionListener, IMediaP
     public static class ToggleFullScreenAction extends BaseAction {
         private static final int FULL_SCREEN_LAYOUT_ID = 5201314;
         private Activity activity;
-        private PlayerView player;
+        private SakuraPlayerView player;
 
-        public ToggleFullScreenAction(Activity activity, PlayerView player) {
+        public ToggleFullScreenAction(Activity activity, SakuraPlayerView player) {
             this.activity = activity;
             this.player = player;
         }

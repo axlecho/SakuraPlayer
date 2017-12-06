@@ -6,7 +6,7 @@
     android:layout_height="match_parent"
     tools:context="com.axlecho.sakuraplayer.MainActivity">
 
-    <com.axlecho.sakura.PlayerView
+    <com.axlecho.sakura.SakuraPlayerView
         android:id="@+id/player"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
