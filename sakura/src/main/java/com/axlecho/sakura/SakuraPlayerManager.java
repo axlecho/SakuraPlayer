@@ -50,34 +50,8 @@ public class SakuraPlayerManager implements IMediaPlayer.OnCompletionListener, I
 
     private final int mMaxVolume;
     private boolean playerSupport;
-    private int STATUS_ERROR = -1;
-    private int STATUS_IDLE = 0;
-    private int STATUS_LOADING = 1;
-    private int STATUS_PLAYING = 2;
-    private int STATUS_PAUSE = 3;
-    private int STATUS_COMPLETED = 4;
-    private long pauseTime;
-    private int status = STATUS_IDLE;
-    private boolean isLive = false;//是否为直播
-    private OrientationEventListener orientationEventListener;
-    private int defaultTimeout = 3000;
-    private int screenWidthPixels;
-
-
-    private boolean isShowing;
-    private boolean portrait;
-    private float brightness = -1;
     private int volume = -1;
     private long newPosition = -1;
-    private long defaultRetryTime = 5000;
-
-    private int currentPosition;
-    private boolean fullScreenOnly;
-
-    private long duration;
-    private boolean instantSeeking;
-    private boolean isDragging;
-
     private String url;
 
     public SakuraPlayerManager(Context context, SakuraPlayerView sakuraPlayerView) {
@@ -90,7 +64,6 @@ public class SakuraPlayerManager implements IMediaPlayer.OnCompletionListener, I
         }
 
         this.context = context;
-        this.screenWidthPixels = this.context.getResources().getDisplayMetrics().widthPixels;
         this.sakuraPlayerView = sakuraPlayerView;
         this.videoView = sakuraPlayerView.videoView;
 
@@ -159,7 +132,6 @@ public class SakuraPlayerManager implements IMediaPlayer.OnCompletionListener, I
         long duration = videoView.getDuration();
         int pos = (int) (duration * percent);
         videoView.seekTo(pos);
-        // Log.d(TAG, "[seekTo] percent " + percent + " duration " + duration + " seek to " + pos);
     }
 
     public SakuraPlayerManager toggleAspectRatio() {
@@ -167,10 +139,6 @@ public class SakuraPlayerManager implements IMediaPlayer.OnCompletionListener, I
             videoView.toggleAspectRatio();
         }
         return null;
-    }
-
-    public void setDefaultRetryTime(long defaultRetryTime) {
-        this.defaultRetryTime = defaultRetryTime;
     }
 
     public int getCurrentState() {
@@ -267,6 +235,7 @@ public class SakuraPlayerManager implements IMediaPlayer.OnCompletionListener, I
                 // TODO 显示下载速度
                 // Toaster.show("download rate:" + extra);
                 break;
+            case IMediaPlayer.MEDIA_INFO_AUDIO_RENDERING_START:
             case IMediaPlayer.MEDIA_INFO_VIDEO_RENDERING_START:
                 sakuraPlayerView.syncPlayingStatus();
                 break;
@@ -475,8 +444,8 @@ public class SakuraPlayerManager implements IMediaPlayer.OnCompletionListener, I
             super.handleMessage(msg);
             String realUrl = (String) msg.obj;
 
-            if(TextUtils.isEmpty(realUrl)) {
-                SakuraLogUtils.e(TAG,"prase failed");
+            if (TextUtils.isEmpty(realUrl)) {
+                SakuraLogUtils.e(TAG, "prase failed");
                 return;
             }
 
