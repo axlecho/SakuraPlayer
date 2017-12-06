@@ -378,4 +378,8 @@ public class SakuraPlayerView extends RelativeLayout implements View.OnTouchList
     public void addHeaders(String headers) {
         this.playerManager.addHeaders(headers);
     }
+
+    public void setAutoPlay(boolean autoPlay) {
+        this.playerManager.setAutoPlay(autoPlay);
+    }
 }
