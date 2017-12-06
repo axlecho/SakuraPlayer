@@ -53,6 +53,7 @@ public class SakuraPlayerManager implements IMediaPlayer.OnCompletionListener, I
     private int volume = -1;
     private long newPosition = -1;
     private String url;
+    private boolean autoPlay = false;
 
     public SakuraPlayerManager(Context context, SakuraPlayerView sakuraPlayerView) {
         try {
@@ -207,6 +208,9 @@ public class SakuraPlayerManager implements IMediaPlayer.OnCompletionListener, I
         }
     }
 
+    public void setAutoPlay(boolean autoPlay) {
+        this.autoPlay = autoPlay;
+    }
     @Override
     public void onCompletion(IMediaPlayer iMediaPlayer) {
         Log.d(TAG, "[onCompletion]");
@@ -426,6 +430,7 @@ public class SakuraPlayerManager implements IMediaPlayer.OnCompletionListener, I
     }
 
     private void parserUrl() {
+        sakuraPlayerView.syncBuffingStatus(true);
         new Thread(new Runnable() {
             @Override
             public void run() {
@@ -443,7 +448,6 @@ public class SakuraPlayerManager implements IMediaPlayer.OnCompletionListener, I
         public void handleMessage(Message msg) {
             super.handleMessage(msg);
             String realUrl = (String) msg.obj;
-
             if (TextUtils.isEmpty(realUrl)) {
                 SakuraLogUtils.e(TAG, "prase failed");
                 return;
@@ -456,6 +460,10 @@ public class SakuraPlayerManager implements IMediaPlayer.OnCompletionListener, I
                     .build();
             addHeaders(headers.toString());
             url = realUrl;
+            sakuraPlayerView.syncBuffingStatus(false);
+            if(autoPlay) {
+                play();
+            }
         }
     };
 }
