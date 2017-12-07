@@ -7,11 +7,8 @@ import android.content.pm.ActivityInfo;
 import android.graphics.Color;
 import android.media.AudioManager;
 import android.os.Build;
-import android.os.Handler;
-import android.os.Message;
 import android.text.TextUtils;
 import android.util.Log;
-import android.view.OrientationEventListener;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.WindowManager;
@@ -25,6 +22,13 @@ import com.axlecho.sakura.utils.SakuraLogUtils;
 import com.axlecho.sakura.videoparser.SakuraParser;
 import com.danikula.videocache.HttpProxyCacheServer;
 
+import io.reactivex.Observable;
+import io.reactivex.ObservableEmitter;
+import io.reactivex.ObservableOnSubscribe;
+import io.reactivex.android.schedulers.AndroidSchedulers;
+import io.reactivex.disposables.Disposable;
+import io.reactivex.functions.Consumer;
+import io.reactivex.schedulers.Schedulers;
 import okhttp3.Headers;
 import tv.danmaku.ijk.media.player.IMediaPlayer;
 import tv.danmaku.ijk.media.player.IjkMediaPlayer;
@@ -211,6 +215,7 @@ public class SakuraPlayerManager implements IMediaPlayer.OnCompletionListener, I
     public void setAutoPlay(boolean autoPlay) {
         this.autoPlay = autoPlay;
     }
+
     @Override
     public void onCompletion(IMediaPlayer iMediaPlayer) {
         Log.d(TAG, "[onCompletion]");
@@ -253,12 +258,17 @@ public class SakuraPlayerManager implements IMediaPlayer.OnCompletionListener, I
         sakuraPlayerView.syncBuffingStatus(false);
     }
 
-    public static abstract class BaseAction implements View.OnClickListener {
+    public static abstract class BaseAction implements View.OnClickListener, Consumer {
         protected abstract void excute();
 
         @Override
         public void onClick(View view) {
             this.excute();
+        }
+
+        @Override
+        public void accept(Object o) throws Exception {
+            excute();
         }
     }
 
@@ -419,7 +429,6 @@ public class SakuraPlayerManager implements IMediaPlayer.OnCompletionListener, I
         }
     }
 
-
     private String getCacheVideoPath(String url) {
         HttpProxyCacheServer proxy = SakuraHttpProxyCacheServerManager.getInstance(context).getProxy();
         return proxy.getProxyUrl(url);
@@ -429,25 +438,36 @@ public class SakuraPlayerManager implements IMediaPlayer.OnCompletionListener, I
         videoView.setHeader(headers);
     }
 
-    private void parserUrl() {
-        sakuraPlayerView.syncBuffingStatus(true);
-        new Thread(new Runnable() {
-            @Override
-            public void run() {
-                String realUrl = SakuraParser.getInstance().getStreamUrl(url);
-                Message msg = Message.obtain();
-                msg.obj = realUrl;
-                handler.sendMessage(msg);
-            }
-        }).start();
+    public void clear() {
+        if (handler != null && !handler.isDisposed()) {
+            handler.dispose();
+        }
+        
+        if (videoView.getCurrentState() != IjkVideoView.STATE_IDLE) {
+            videoView.release(true);
+        }
     }
 
+    private void parserUrl() {
+        handler = src.subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(parserObserver);
+    }
 
-    Handler handler = new Handler() {
+    private Disposable handler;
+    private Observable<String> src = Observable.create(new ObservableOnSubscribe<String>() {
         @Override
-        public void handleMessage(Message msg) {
-            super.handleMessage(msg);
-            String realUrl = (String) msg.obj;
+        public void subscribe(ObservableEmitter<String> e) throws Exception {
+            String ret = SakuraParser.getInstance().getStreamUrl(url);
+            e.onNext(ret);
+            e.onComplete();
+        }
+    });
+
+    private Consumer<String> parserObserver = new Consumer<String>() {
+        @Override
+        public void accept(String realUrl) throws Exception {
+            SakuraLogUtils.d(TAG, "[onNext]");
             if (TextUtils.isEmpty(realUrl)) {
                 SakuraLogUtils.e(TAG, "prase failed");
                 return;
@@ -461,7 +481,7 @@ public class SakuraPlayerManager implements IMediaPlayer.OnCompletionListener, I
             addHeaders(headers.toString());
             url = realUrl;
             sakuraPlayerView.syncBuffingStatus(false);
-            if(autoPlay) {
+            if (autoPlay) {
                 play();
             }
         }

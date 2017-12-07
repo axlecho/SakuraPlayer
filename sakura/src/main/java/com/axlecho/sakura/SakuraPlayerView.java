@@ -16,7 +16,7 @@ import android.widget.SeekBar;
 import android.widget.TextView;
 
 import com.axlecho.sakura.IjkVideoPlayer.IjkVideoView;
-import com.axlecho.sakura.utils.SakuraLogUtils;
+import com.axlecho.sakura.utils.SakuraTextUtils;
 import com.squareup.picasso.Picasso;
 
 import java.util.Timer;
@@ -131,17 +131,9 @@ public class SakuraPlayerView extends RelativeLayout implements View.OnTouchList
     }
 
     public void clear() {
-        if (playerManager.isPlaying()) {
-            playerManager.stop();
-            playerManager = null;
-        }
-
+        this.playerManager.clear();
         this.stopSendVideoProcessSyncMsg();
         this.cancelDelayHideControllerMsg();
-
-        if (handler != null) {
-            handler = null;
-        }
     }
 
     public void stop() {
@@ -209,8 +201,8 @@ public class SakuraPlayerView extends RelativeLayout implements View.OnTouchList
         if (duration <= 0) {
             controllerSeekBar.setProgress(0);
             controllerSeekBar.setSecondaryProgress(0);
-            controllerCurrentTimeTextView.setText(generateTime(position));
-            controllerEndTimeTextView.setText(generateTime(duration));
+            controllerCurrentTimeTextView.setText(SakuraTextUtils.generateTime(position));
+            controllerEndTimeTextView.setText(SakuraTextUtils.generateTime(duration));
             return;
         }
 
@@ -218,8 +210,8 @@ public class SakuraPlayerView extends RelativeLayout implements View.OnTouchList
         controllerSeekBar.setProgress(pos);
         int percent = videoView.getBufferPercentage();
         controllerSeekBar.setSecondaryProgress(percent * 10);
-        controllerCurrentTimeTextView.setText(generateTime(position));
-        controllerEndTimeTextView.setText(generateTime(duration));
+        controllerCurrentTimeTextView.setText(SakuraTextUtils.generateTime(position));
+        controllerEndTimeTextView.setText(SakuraTextUtils.generateTime(duration));
     }
 
     public void syncControllerStatus(boolean isShow) {
@@ -247,13 +239,6 @@ public class SakuraPlayerView extends RelativeLayout implements View.OnTouchList
         action.excute();
     }
 
-    private String generateTime(long time) {
-        int totalSeconds = (int) (time / 1000);
-        int seconds = totalSeconds % 60;
-        int minutes = (totalSeconds / 60) % 60;
-        int hours = totalSeconds / 3600;
-        return hours > 0 ? String.format("%02d:%02d:%02d", hours, minutes, seconds) : String.format("%02d:%02d", minutes, seconds);
-    }
 
     private void startSendVideoProcessSyncMsg() {
         this.stopSendVideoProcessSyncMsg();
@@ -351,7 +336,7 @@ public class SakuraPlayerView extends RelativeLayout implements View.OnTouchList
         float percent = progress / 1000f;
         long duration = playerManager.getDuration();
         long currentPosition = (long) (duration * percent);
-        controllerCurrentTimeTextView.setText(generateTime(currentPosition));
+        controllerCurrentTimeTextView.setText(SakuraTextUtils.generateTime(currentPosition));
     }
 
     @Override

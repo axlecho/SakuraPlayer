@@ -2,6 +2,7 @@ package com.axlecho.sakura.utils;
 
 import java.io.UnsupportedEncodingException;
 import java.net.URLDecoder;
+import java.util.Locale;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -30,5 +31,14 @@ public class SakuraTextUtils {
             SakuraLogUtils.w(TAG, "decode failed " + url);
         }
         return null;
+    }
+
+    public static String generateTime(long time) {
+        int totalSeconds = (int) (time / 1000);
+        int seconds = totalSeconds % 60;
+        int minutes = (totalSeconds / 60) % 60;
+        int hours = totalSeconds / 3600;
+        return hours > 0 ? String.format(Locale.CHINA, "%02d:%02d:%02d", hours, minutes, seconds)
+                : String.format(Locale.CHINA, "%02d:%02d", minutes, seconds);
     }
 }

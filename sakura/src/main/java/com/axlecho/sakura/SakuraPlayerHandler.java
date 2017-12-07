@@ -3,8 +3,6 @@ package com.axlecho.sakura;
 import android.os.Handler;
 import android.os.Message;
 
-import com.axlecho.sakura.utils.SakuraLogUtils;
-
 /**
  * Created by axlecho on 2017/12/6 0006.
  */
@@ -22,7 +20,6 @@ public class SakuraPlayerHandler extends Handler {
 
     @Override
     public void handleMessage(Message msg) {
-        SakuraLogUtils.d(TAG, "recivie massage " + msg.what);
         switch (msg.what) {
             case VIDEO_PROCESS_SYNC_MSG:
                 player.syncProgress();
