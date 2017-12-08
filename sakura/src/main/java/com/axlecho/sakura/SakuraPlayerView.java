@@ -16,6 +16,7 @@ import android.widget.SeekBar;
 import android.widget.TextView;
 
 import com.axlecho.sakura.IjkVideoPlayer.IjkVideoView;
+import com.axlecho.sakura.utils.SakuraDeviceUtils;
 import com.axlecho.sakura.utils.SakuraTextUtils;
 import com.squareup.picasso.Picasso;
 
@@ -134,6 +135,7 @@ public class SakuraPlayerView extends RelativeLayout implements View.OnTouchList
         this.playerManager.clear();
         this.stopSendVideoProcessSyncMsg();
         this.cancelDelayHideControllerMsg();
+        SakuraDeviceUtils.getInstance(this.getContext()).release();
     }
 
     public void stop() {
@@ -166,6 +168,7 @@ public class SakuraPlayerView extends RelativeLayout implements View.OnTouchList
         this.playerBtn.setOnClickListener(new SakuraPlayerManager.PauseAction(playerManager, this));
         this.controllerPlayerBtn.setOnClickListener(new SakuraPlayerManager.PauseAction(playerManager, this));
         this.startSendVideoProcessSyncMsg();
+        SakuraDeviceUtils.getInstance(this.getContext()).keekLight();
     }
 
     public void syncStopStatus() {
@@ -181,6 +184,7 @@ public class SakuraPlayerView extends RelativeLayout implements View.OnTouchList
         this.syncControllerStatus(true);
         this.controllerLayout.setVisibility(GONE);
         this.initAction();
+        SakuraDeviceUtils.getInstance(this.getContext()).release();
     }
 
     public void syncPauseStatus() {
@@ -188,6 +192,7 @@ public class SakuraPlayerView extends RelativeLayout implements View.OnTouchList
         this.controllerPlayerBtn.setImageResource(R.mipmap.ic_player_play_white_24dp);
         this.playerBtn.setOnClickListener(new SakuraPlayerManager.ResumeAction(playerManager, this));
         this.controllerPlayerBtn.setOnClickListener(new SakuraPlayerManager.ResumeAction(playerManager, this));
+        SakuraDeviceUtils.getInstance(this.getContext()).release();
     }
 
     public void syncErrorStatus() {
