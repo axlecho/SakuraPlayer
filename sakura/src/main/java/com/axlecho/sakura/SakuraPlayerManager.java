@@ -225,7 +225,8 @@ public class SakuraPlayerManager implements IMediaPlayer.OnCompletionListener, I
     @Override
     public boolean onError(IMediaPlayer iMediaPlayer, int what, int extra) {
         Log.d(TAG, "[onError] what " + what + " extra " + extra);
-        return false;
+        sakuraPlayerView.syncErrorStatus(String.valueOf(what));
+        return true;
     }
 
     @Override
@@ -442,7 +443,7 @@ public class SakuraPlayerManager implements IMediaPlayer.OnCompletionListener, I
         if (handler != null && !handler.isDisposed()) {
             handler.dispose();
         }
-        
+
         if (videoView.getCurrentState() != IjkVideoView.STATE_IDLE) {
             videoView.release(true);
         }

@@ -44,17 +44,17 @@
         app:layout_constraintTop_toTopOf="parent" />
 
     <TextView
-        android:id="@+id/app_video_speed"
+        android:id="@+id/app_video_error_info"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="4dp"
         android:gravity="center"
-        android:text="188Kb/s"
         android:textColor="@android:color/white"
         android:visibility="gone"
+        app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toRightOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/app_video_loading" />
+        app:layout_constraintTop_toTopOf="parent" />
 
     <!-- 底部栏-->
     <include

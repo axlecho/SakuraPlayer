@@ -51,6 +51,7 @@ public class SakuraPlayerView extends RelativeLayout implements View.OnTouchList
     private TextView statusTitleTextView;
     private View statusLoadingView;
     private ImageView statusTrumbImageView;
+    private TextView statusErrorTextView;
 
     private SakuraPlayerManager playerManager;
     private Timer syncVideoProcessTimer;
@@ -111,6 +112,7 @@ public class SakuraPlayerView extends RelativeLayout implements View.OnTouchList
         statusTitleTextView = (TextView) this.findViewById(R.id.app_video_title);
         statusLoadingView = this.findViewById(R.id.app_video_loading);
         statusTrumbImageView = (ImageView) this.findViewById(R.id.player_trumb_imageview);
+        statusErrorTextView = (TextView) this.findViewById(R.id.app_video_error_info);
         videoView = (IjkVideoView) this.findViewById(R.id.player_video_view);
         controllerLayout = this.findViewById(R.id.player_controllbar_layout);
         controllerSeekBar.setMax(1000);
@@ -202,7 +204,11 @@ public class SakuraPlayerView extends RelativeLayout implements View.OnTouchList
         SakuraDeviceUtils.getInstance(this.getContext()).release();
     }
 
-    public void syncErrorStatus() {
+    public void syncErrorStatus(String error) {
+        syncBuffingStatus(false);
+        syncControllerStatus(false);
+        statusErrorTextView.setText(error);
+        statusErrorTextView.setVisibility(VISIBLE);
     }
 
     public void syncProgress() {
