@@ -4,6 +4,7 @@ import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 
 import com.axlecho.sakura.SakuraPlayerView;
+import com.axlecho.sakura.utils.SakuraLogUtils;
 
 public class MainActivity extends AppCompatActivity {
     private static final String TAG = "demo";
@@ -39,5 +40,16 @@ public class MainActivity extends AppCompatActivity {
     protected void onDestroy() {
         super.onDestroy();
         player.clear();
+    }
+
+    @Override
+    public void onBackPressed() {
+        if (player.isFullScreen()) {
+            player.toggleFullScreen();
+            SakuraLogUtils.d(TAG, "to normal mode");
+            return;
+        }
+
+        super.onBackPressed();
     }
 }

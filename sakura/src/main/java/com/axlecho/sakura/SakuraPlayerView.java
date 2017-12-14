@@ -131,6 +131,8 @@ public class SakuraPlayerView extends RelativeLayout implements View.OnTouchList
         this.controllerFullScreenBtn.setOnClickListener(new SakuraPlayerManager.ToggleFullScreenAction(activity, this));
     }
 
+
+    // interface
     public void clear() {
         this.playerManager.clear();
         this.stopSendVideoProcessSyncMsg();
@@ -150,6 +152,11 @@ public class SakuraPlayerView extends RelativeLayout implements View.OnTouchList
         Picasso.with(getContext()).load(url).into(statusTrumbImageView);
     }
 
+    public boolean isFullScreen() {
+        return isFullScreen;
+    }
+
+    // view status
     public void syncBuffingStatus(boolean isBuffing) {
         this.videoView.setVisibility(VISIBLE);
         if (isBuffing) {
