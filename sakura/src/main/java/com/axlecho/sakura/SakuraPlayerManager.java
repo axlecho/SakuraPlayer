@@ -22,6 +22,8 @@ import com.axlecho.sakura.utils.SakuraLogUtils;
 import com.axlecho.sakura.videoparser.SakuraParser;
 import com.danikula.videocache.HttpProxyCacheServer;
 
+import java.util.Locale;
+
 import io.reactivex.Observable;
 import io.reactivex.ObservableEmitter;
 import io.reactivex.ObservableOnSubscribe;
@@ -225,7 +227,10 @@ public class SakuraPlayerManager implements IMediaPlayer.OnCompletionListener, I
     @Override
     public boolean onError(IMediaPlayer iMediaPlayer, int what, int extra) {
         Log.d(TAG, "[onError] what " + what + " extra " + extra);
-        sakuraPlayerView.syncErrorStatus(String.valueOf(what));
+
+        String errorString = context.getResources().getString(R.string.error_tip);
+        String msg = String.format(Locale.CHINA,errorString,what);
+        sakuraPlayerView.syncErrorStatus(msg);
         return true;
     }
 

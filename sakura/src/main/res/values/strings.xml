@@ -1,3 +1,4 @@
 <resources>
     <string name="app_name">sakura</string>
+    <string name="error_tip"><u>error: %d,tap for retry</u></string>
 </resources>

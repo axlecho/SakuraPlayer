@@ -19,7 +19,9 @@ public class MainActivity extends AppCompatActivity {
         // player.setTrumbImageUrl("http://webinput.nie.netease.com/img/yys/logo.png/100");
         // player.setVideoUrl("http://nie.v.netease.com/nie/yys/gw/pc/japancm.mp4");
         // player.setVideoUrl("https://www.bilibili.com/video/av14661594/");
-        player.setVideoUrl("https://www.bilibili.com/video/av15560010/");
+        // player.setVideoUrl("https://www.bilibili.com/video/av15560010/");
+
+        player.setVideoUrl("adaadf");
         player.setAutoPlay(true);
         // player.setVideoUrl("http://v.youku.com/v_show/id_XMzE4MzY3NjM0OA==.html");
 
