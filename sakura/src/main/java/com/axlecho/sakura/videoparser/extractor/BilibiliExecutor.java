@@ -53,7 +53,7 @@ public class BilibiliExecutor extends BaseExtractors {
     private String realUrl;
 
     @Override
-    public String get(String pageUrl) {
+    public String get(String pageUrl) throws Exception {
         this.url = pageUrl;
         try {
             this.prepare();
@@ -63,7 +63,7 @@ public class BilibiliExecutor extends BaseExtractors {
         return realUrl;
     }
 
-    public String apiReq(String cid, String quality, boolean bangumi, boolean bangumiMovie) throws IOException {
+    public String apiReq(String cid, String quality, boolean bangumi, boolean bangumiMovie) throws Exception {
         String ts = String.valueOf(System.currentTimeMillis());
         String paramsStr = String.format("cid=%s&player=1&quality=%s&ts=%s", cid, quality, ts);
         String chkSum = SakuraEncryptUtils.md5sum(paramsStr + SEC1);
@@ -72,7 +72,7 @@ public class BilibiliExecutor extends BaseExtractors {
         return xmlStr;
     }
 
-    private void prepare() throws IOException {
+    private void prepare() throws Exception {
         if (url.contains("watchlater")) {
             String aid = SakuraTextUtils.search(url, "av(\\d+)");
             url = String.format("http://www.bilibili.com/video/av%s/", aid);
@@ -114,7 +114,7 @@ public class BilibiliExecutor extends BaseExtractors {
 
     }
 
-    private void entry() throws IOException {
+    private void entry() throws Exception {
         // tencent player
         String tcFlashVars = SakuraTextUtils.search(page, "\"bili-cid=\\d+&bili-aid=\\d+&vid=([^\"]+)\"");
         if (tcFlashVars != null) {
@@ -139,7 +139,7 @@ public class BilibiliExecutor extends BaseExtractors {
         }
     }
 
-    private void downloadByVid(String cid, boolean bangumi) throws IOException {
+    private void downloadByVid(String cid, boolean bangumi) throws Exception {
         String quality = bangumi ? STREAM_TYPES.get(0) : STREAM_TYPES.get(1);
         String apiXml = apiReq(cid, quality, bangumi, false);
         try {

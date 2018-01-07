@@ -1,5 +1,7 @@
 package com.axlecho.sakura.utils;
 
+import android.accounts.NetworkErrorException;
+
 import java.io.IOException;
 
 import okhttp3.Headers;
@@ -48,13 +50,16 @@ public class SakuraNetworkUtils {
 
     }
 
-    public String get(String url) throws IOException {
+    public String get(String url) throws Exception {
         Request request = new Request.Builder()
                 .url(url)
                 .headers(this.buildFakeHeaders())
                 .build();
 
         Response response = client.newCall(request).execute();
+        if(response.code() != 200) {
+            throw new Exception(response.code() + " " +response.message());
+        }
         return response.body().string();
     }
 

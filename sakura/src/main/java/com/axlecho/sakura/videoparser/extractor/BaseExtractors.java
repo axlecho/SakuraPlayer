@@ -5,5 +5,5 @@ package com.axlecho.sakura.videoparser.extractor;
  */
 
 public abstract class BaseExtractors {
-    public abstract String get(String pageUrl);
+    public abstract String get(String pageUrl) throws Exception;
 }

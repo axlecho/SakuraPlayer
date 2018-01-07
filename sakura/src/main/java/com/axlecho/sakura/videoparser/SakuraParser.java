@@ -32,7 +32,7 @@ public class SakuraParser {
         return instance;
     }
 
-    public String getStreamUrl(String pageUrl) {
+    public String getStreamUrl(String pageUrl) throws Exception {
         this.extractor = resolveExecutor(pageUrl);
         if (extractor == null) {
             // not surpport ye

@@ -32,7 +32,7 @@ public class XiamiExecutor extends BaseExtractors {
     private String realUrl;
 
     @Override
-    public String get(String pageUrl) {
+    public String get(String pageUrl) throws Exception {
         this.url = pageUrl;
         try {
             this.prepare();
@@ -42,20 +42,20 @@ public class XiamiExecutor extends BaseExtractors {
         return realUrl;
     }
 
-    public String apiReq(String sid) throws IOException {
+    public String apiReq(String sid) throws Exception {
         String apiUrl = API_URL + sid;
         String xmlStr = SakuraNetworkUtils.getInstance().get(apiUrl);
         return xmlStr;
     }
 
-    private void prepare() throws IOException {
+    private void prepare() throws Exception {
         String sid = SakuraTextUtils.search(url, "song/(\\d+)");
         SakuraLogUtils.d(TAG,"sid " + sid);
         downloadBySid(sid);
     }
 
 
-    private void downloadBySid(String sid) throws IOException {
+    private void downloadBySid(String sid) throws Exception {
         String apiXml = apiReq(sid);
         try {
             this.parseXiamiXml(apiXml);

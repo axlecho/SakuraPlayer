@@ -229,7 +229,7 @@ public class SakuraPlayerManager implements IMediaPlayer.OnCompletionListener, I
         Log.d(TAG, "[onError] what " + what + " extra " + extra);
 
         String errorString = context.getResources().getString(R.string.error_tip);
-        String msg = String.format(Locale.CHINA,errorString,what);
+        String msg = String.format(Locale.CHINA, errorString, what);
         sakuraPlayerView.syncErrorStatus(msg);
         return true;
     }
@@ -457,7 +457,7 @@ public class SakuraPlayerManager implements IMediaPlayer.OnCompletionListener, I
     private void parserUrl() {
         handler = src.subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(parserObserver);
+                .subscribe(parserObserver, errorHandler);
     }
 
     private Disposable handler;
@@ -469,6 +469,13 @@ public class SakuraPlayerManager implements IMediaPlayer.OnCompletionListener, I
             e.onComplete();
         }
     });
+
+    private Consumer<Throwable> errorHandler = new Consumer<Throwable>() {
+        @Override
+        public void accept(Throwable throwable) throws Exception {
+            sakuraPlayerView.syncErrorStatus(throwable.getMessage());
+        }
+    };
 
     private Consumer<String> parserObserver = new Consumer<String>() {
         @Override
