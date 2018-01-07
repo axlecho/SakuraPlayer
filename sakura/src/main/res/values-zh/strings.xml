@@ -1,0 +1,4 @@
+<resources>
+    <string name="app_name">sakura</string>
+    <string name="error_tip"><u>错误: %s,点击在其他应用打开</u></string>
+</resources>

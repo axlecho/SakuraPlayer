@@ -20,6 +20,7 @@ import com.axlecho.sakura.utils.SakuraDeviceUtils;
 import com.axlecho.sakura.utils.SakuraTextUtils;
 import com.squareup.picasso.Picasso;
 
+import java.util.Locale;
 import java.util.Timer;
 import java.util.TimerTask;
 
@@ -65,6 +66,7 @@ public class SakuraPlayerView extends RelativeLayout implements View.OnTouchList
     public ViewGroup.LayoutParams params;
     public boolean isFullScreen = false;
     private SakuraPlayerHandler handler;
+    private SakuraErrorListener errorHandler;
 
     public SakuraPlayerView(Context context) {
         super(context);
@@ -204,11 +206,21 @@ public class SakuraPlayerView extends RelativeLayout implements View.OnTouchList
         SakuraDeviceUtils.getInstance(this.getContext()).release();
     }
 
-    public void syncErrorStatus(String error) {
+    public void syncErrorStatus(final String error) {
         syncBuffingStatus(false);
         syncControllerStatus(false);
-        statusErrorTextView.setText(error);
+        statusErrorTextView.setText(String.format(Locale.CHINA, getContext().getResources().getString(R.string.error_tip), error));
         statusErrorTextView.setVisibility(VISIBLE);
+        statusErrorTextView.setOnClickListener(new OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                if (errorHandler != null) {
+                    errorHandler.onError(error);
+                } else {
+                    playerManager.processErrorWithDefaultAction();
+                }
+            }
+        });
     }
 
     public void syncProgress() {
@@ -384,5 +396,13 @@ public class SakuraPlayerView extends RelativeLayout implements View.OnTouchList
 
     public void setAutoPlay(boolean autoPlay) {
         this.playerManager.setAutoPlay(autoPlay);
+    }
+
+    public void setErrorHandler(SakuraErrorListener listener) {
+        this.errorHandler = listener;
+    }
+
+    public interface SakuraErrorListener {
+        void onError(String error);
     }
 }

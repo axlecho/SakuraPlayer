@@ -48,6 +48,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="4dp"
+        android:padding="@dimen/common_margin_parent_horizontal"
         android:gravity="center"
         android:textColor="@android:color/white"
         android:visibility="gone"

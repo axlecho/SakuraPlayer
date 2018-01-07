@@ -1,4 +1,4 @@
 <resources>
     <string name="app_name">sakura</string>
-    <string name="error_tip"><u>error: %d,tap for retry</u></string>
+    <string name="error_tip"><u>error: %s,tap for open in other app</u></string>
 </resources>

@@ -3,9 +3,11 @@ package com.axlecho.sakura;
 import android.app.ActionBar;
 import android.app.Activity;
 import android.content.Context;
+import android.content.Intent;
 import android.content.pm.ActivityInfo;
 import android.graphics.Color;
 import android.media.AudioManager;
+import android.net.Uri;
 import android.os.Build;
 import android.text.TextUtils;
 import android.util.Log;
@@ -264,6 +266,8 @@ public class SakuraPlayerManager implements IMediaPlayer.OnCompletionListener, I
         sakuraPlayerView.syncBuffingStatus(false);
     }
 
+
+
     public static abstract class BaseAction implements View.OnClickListener, Consumer {
         protected abstract void excute();
 
@@ -499,4 +503,12 @@ public class SakuraPlayerManager implements IMediaPlayer.OnCompletionListener, I
             }
         }
     };
+
+    public void processErrorWithDefaultAction() {
+        Intent intent = new Intent();
+        intent.setAction("android.intent.action.VIEW");
+        Uri content_url = Uri.parse(url);
+        intent.setData(content_url);
+        context.startActivity(intent);
+    }
 }
