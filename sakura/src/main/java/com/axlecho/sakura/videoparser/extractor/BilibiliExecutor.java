@@ -68,8 +68,7 @@ public class BilibiliExecutor extends BaseExtractors {
         String paramsStr = String.format("cid=%s&player=1&quality=%s&ts=%s", cid, quality, ts);
         String chkSum = SakuraEncryptUtils.md5sum(paramsStr + SEC1);
         String apiUrl = API_URL + paramsStr + "&sign=" + chkSum;
-        String xmlStr = SakuraNetworkUtils.getInstance().get(apiUrl);
-        return xmlStr;
+        return SakuraNetworkUtils.getInstance().get(apiUrl, "http://www.bilibili.com/");
     }
 
     private void prepare() throws Exception {
@@ -173,7 +172,7 @@ public class BilibiliExecutor extends BaseExtractors {
 
     private void testDownload() {
         try {
-            SakuraNetworkUtils.getInstance().get(realUrl,url);
+            SakuraNetworkUtils.getInstance().get(realUrl, url);
         } catch (IOException e) {
             e.printStackTrace();
         }
