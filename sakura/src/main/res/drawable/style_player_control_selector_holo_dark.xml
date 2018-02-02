@@ -14,8 +14,8 @@
 -->
 
 <selector xmlns:android="http://schemas.android.com/apk/res/android">
-<item android:drawable="@mipmap/ic_player_control_disabled_holo" android:state_enabled="false" />
-<item android:drawable="@mipmap/ic_player_control_pressed_holo" android:state_pressed="true" />
-<item android:drawable="@mipmap/ic_player_control_focused_holo" android:state_selected="true" />
-<item android:drawable="@mipmap/ic_player_control_normal_holo" />
+<item android:drawable="@mipmap/ic_player_control" android:state_enabled="false" />
+<item android:drawable="@mipmap/ic_player_control" android:state_pressed="true" />
+<item android:drawable="@mipmap/ic_player_control" android:state_selected="true" />
+<item android:drawable="@mipmap/ic_player_control" />
 </selector>

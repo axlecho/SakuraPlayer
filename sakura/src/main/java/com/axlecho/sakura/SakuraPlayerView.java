@@ -230,7 +230,7 @@ public class SakuraPlayerView extends RelativeLayout implements View.OnTouchList
         // Log.d(TAG, "[syncProgress] current " + position + " duration " + duration);
         if (duration <= 0) {
             controllerSeekBar.setProgress(0);
-            controllerSeekBar.setSecondaryProgress(0);
+            // controllerSeekBar.setSecondaryProgress(0);
             controllerCurrentTimeTextView.setText(SakuraTextUtils.generateTime(position));
             controllerEndTimeTextView.setText(SakuraTextUtils.generateTime(duration));
             return;
@@ -239,7 +239,7 @@ public class SakuraPlayerView extends RelativeLayout implements View.OnTouchList
         int pos = (int) (1000 * position / duration);
         controllerSeekBar.setProgress(pos);
         int percent = videoView.getBufferPercentage();
-        controllerSeekBar.setSecondaryProgress(percent * 10);
+        // controllerSeekBar.setSecondaryProgress(percent * 10);
         controllerCurrentTimeTextView.setText(SakuraTextUtils.generateTime(position));
         controllerEndTimeTextView.setText(SakuraTextUtils.generateTime(duration));
     }

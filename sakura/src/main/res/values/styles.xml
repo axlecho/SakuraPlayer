@@ -1,18 +1,9 @@
 <resources xmlns:tools="http://schemas.android.com/tools">
 
-    <style name="SeekBarAppTheme">
-        <item name="android:indeterminateOnly">false</item>
-        <item name="android:focusable">true</item>
+    <style name="SeekBarAppTheme" parent="Base.Widget.AppCompat.SeekBar">
         <item name="android:progressDrawable">
             @drawable/style_player_progress_horizontal_holo_dark
         </item>
-        <item name="android:indeterminateDrawable">
-            @drawable/style_player_progress_horizontal_holo_dark
-        </item>
         <item name="android:thumb">@drawable/style_player_control_selector_holo_dark</item>
-        <item name="android:minHeight">13dip</item>
-        <item name="android:maxHeight">13dip</item>
-        <item name="android:paddingLeft">8dip</item>
-        <item name="android:paddingRight">8dip</item>
     </style>
 </resources>
