@@ -61,6 +61,7 @@ public class SakuraPlayerManager implements IMediaPlayer.OnCompletionListener, I
     private int volume = -1;
     private long newPosition = -1;
     private String url;
+    private String srcurl;
     private boolean autoPlay = false;
 
     public SakuraPlayerManager(Context context, SakuraPlayerView sakuraPlayerView) {
@@ -109,6 +110,7 @@ public class SakuraPlayerManager implements IMediaPlayer.OnCompletionListener, I
 
     public void setVideoUrl(String videoUrl) {
         this.url = videoUrl;
+        this.srcurl = videoUrl;
         this.parserUrl();
     }
 
@@ -265,7 +267,6 @@ public class SakuraPlayerManager implements IMediaPlayer.OnCompletionListener, I
         Log.d(TAG, "[onPrepared] state " + videoView.getCurrentState());
         sakuraPlayerView.syncBuffingStatus(false);
     }
-
 
 
     public static abstract class BaseAction implements View.OnClickListener, Consumer {
@@ -507,7 +508,7 @@ public class SakuraPlayerManager implements IMediaPlayer.OnCompletionListener, I
     public void processErrorWithDefaultAction() {
         Intent intent = new Intent();
         intent.setAction("android.intent.action.VIEW");
-        Uri content_url = Uri.parse(url);
+        Uri content_url = Uri.parse(srcurl);
         intent.setData(content_url);
         context.startActivity(intent);
     }
