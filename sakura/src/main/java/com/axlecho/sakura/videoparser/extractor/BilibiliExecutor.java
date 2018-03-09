@@ -29,7 +29,7 @@ public class BilibiliExecutor extends BaseExtractors {
 
     private static final String TAG = NAME.toLowerCase();
     private static final String LIVE_API = "http://live.bilibili.com/api/playurl?cid={}&otype=json";
-    private static final String API_URL = "http://interface.bilibili.com/playurl?";
+    private static final String API_URL = "http://interface.bilibili.com/v2/playurl?";
     private static final String BANGUMI_API_URL = "http://bangumi.bilibili.com/player/web_api/playurl?";
 
     private static final String SEC1 = "1c15888dc316e05a15fdd0a02ed6584f";
